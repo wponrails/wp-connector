@@ -45,6 +45,51 @@ When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin
 
 In WordPress configure Webhooks (HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to have send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URL of the Webhooks to the `post_save` route in the Rails app.
 
+Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
+
+```ruby
+post "webhooks/*more" => "wp_connector#webhook"
+```
+
+Create a `WpConnectorController` class (in `app/controllers/wp_connector_controller.rb`) that specifies a `webhook` action:
+
+```ruby
+class WpConnectorController < ApplicationController
+  def webhook
+  end
+end
+```
+
+Finally create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` type:
+
+```ruby
+class Post < ActiveRecord::Base
+  include WpCache
+
+  def self.on_post_save(wp_id)
+    wp_json = get_from_wp('posts', wp_id)
+    if p = Post.where('id= ?', wp_id).first
+      p.from_wp_json(wp_json)
+    else
+      p = Post.new
+      p.from_wp_json(wp_json)
+    end
+    p.save!
+  end
+
+  def from_wp_json(json)
+    self.id = json["ID"]
+    self.title = json["title"]
+    self.content = json["content"]
+    self.slug = json["slug"]
+    self.excerpt = json["excerpt"]
+    self.updated_at =  json["updated"]
+    self.created_at =  json["date"]
+
+    # TODO add author and other related objects
+  end
+end
+```
 
 
 ## Todo
