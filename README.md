@@ -1,9 +1,11 @@
-# wp-connector
 
-This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using something else (in this case a Rails application) to serve the content.  WPEP makes use of:
+wp-connector
+============
 
-* [**HookPress**](), a configurable WP plugin that allows WP actions to trigger webhook calls.
-* [**wp-rest-api**](), a WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
+This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using something else (in this case a Rails application) to serve the content.  WPEP makes use of the following WP plugins:
+
+* [**HookPress**](https://wordpress.org/plugins/hookpress) ([Homepage](http://mitcho.com/code/hookpress), [Github](https://github.com/mitcho/hookpress)), a configurable WP plugin that allows WP actions to trigger webhook calls.
+* [**json-rest-api**](https://wordpress.org/plugins/json-rest-api) ([Homepage](http://wp-api.org), [Github](https://github.com/WP-API/WP-API)), a WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
 
 With WPEP the content's master data resides in WP, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
 
@@ -28,22 +30,20 @@ The delayed job fetches the relevant content from WP using WP's REST-API (this c
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'wpep', :github => 'hoppinger/wp-connector'
+gem 'wp-connector', :github => 'hoppinger/wp-connector'
 ```
 
-And then execute:
-
-    bundle
+Then execute `bundle install`.
 
 
 
 ## Usage
 
-In WordPress install the following plugins: HookPress and wp-api.
+In WordPress install both the HookPress and json-rest-api plugin.
 
-When using the wonderful ACF plugin, consider installing the `wp-api-acf` from this repository (find it in `wordpress/plugin`).
+When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin that can be found in this repository (find it in `wordpress/plugin`).
 
-In WordPress configure webhooks (HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to have send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URL of the Webhooks to the `post_save` in the Rails app.
+In WordPress configure Webhooks (HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to have send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URL of the Webhooks to the `post_save` route in the Rails app.
 
 
 
@@ -61,3 +61,11 @@ In WordPress configure webhooks (HookPress) from the admin backend. Make sure th
 3. Commit your changes (`git commit -am 'Add some feature'`).
 4. Push to the branch (`git push origin my-new-feature`).
 5. Submit a "Pull Request".
+
+
+
+## License
+
+Copyright (c) 2014, Hoppinger B.V.
+
+Open source, under the MIT-licensed. See `LICENSE.txt` in the root of this repository.
