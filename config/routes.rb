@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   resources :posts
-  
-  post 'wpep/post_save'
 
+  post 'wp-connector/post_save'
 end

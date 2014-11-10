@@ -1,4 +1,4 @@
-Copyright (c) 2014 janmetten
+Copyright (c) 2014 Hoppinger B.V., The Netherlands
 
 MIT License
 

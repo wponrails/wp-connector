@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in wpep.gemspec
+# Gem's dependencies are specified in `wp-connector.gemspec`.
 gemspec
