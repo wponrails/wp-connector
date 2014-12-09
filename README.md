@@ -48,7 +48,7 @@ Add the wordpress json route to your rails configuration by adding the `wordpres
 ```ruby
 wordpress_url: "http://wpep.dev/?json_route="
 ```
-Here wpep.dev is de url for your Wordpress site.
+Here wpep.dev is the url for your Wordpress site.
 
 
 Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
