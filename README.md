@@ -10,7 +10,7 @@ With WPEP the content's master data resides in WP, as that's where is it created
 
 The main reasons for not using WP to serve public web requests:
 
-* **Security** — The internet is a dagerous place and WordPress has proven to be a popular target for malicious hackers. By not serving public request from WP, but only the admin interface, the attack surface is significantly reduced.
+* **Security** — The internet is a dangerous place and WordPress has proven to be a popular target for malicious hackers. By not serving public request from WP, but only the admin interface, the attack surface is significantly reduced.
 * **Performance** — Performance tuning WP can be difficult, especially when a generic caching-proxy (such as Varnish) is not viable due to dynamic content such as ads or personalization.  Application frameworks provide means for fine-grained caching strategies that are needed to serve high-traffic websites that contain dynamic content.
 * **Cost (TCO) of customizations** — Customizing WP, and maintaining those customizations, is laborious and error prone compared to building custom functionality on top of an application framework (which is specifically designed for that purpose).
 
@@ -43,6 +43,13 @@ In WordPress install both the HookPress and json-rest-api plugin.
 When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin that can be found in this repository (find it in `wordpress/plugin`).
 
 In WordPress configure the "Webhooks" (provided by HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URLs of the Webhooks to the `post_save` route in the Rails app.
+
+Add the wordpress json route to your rails configuration by adding the `wordpress_url` config option to your settings file in `config/settings` (e.g. `config/settings/development.yml`):
+```ruby
+wordpress_url: "http://wpep.dev/?json_route="
+```
+Here wpep.dev is de url for your Wordpress site.
+
 
 Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
 
