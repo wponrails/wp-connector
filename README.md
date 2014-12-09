@@ -64,7 +64,7 @@ class WpConnectorController < ApplicationController
   include WpConnection
   
   def post_save
-     save_async('posts') 
+     Post.sync_cache('posts', wp_id_from_params) 
   end
 end
 ```
