@@ -54,28 +54,32 @@ Create a `WpConnectorController` class (in `app/controllers/wp_connector_control
 
 ```ruby
 class WpConnectorController < ApplicationController
+
+  include WpConnection
+
   def webhook
-    # TODO: write the implementation
+    save_async(object_name) 
+  end
+end
+```
+For example for the `Post` type:
+
+```ruby
+class WpConnectorController < ApplicationController
+
+  include WpConnection
+  
+  def post_save
+     save_async('posts') 
   end
 end
 ```
 
-Finally create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` type:
+Create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` type:
 
 ```ruby
 class Post < ActiveRecord::Base
   include WpCache
-
-  def self.on_post_save(wp_id)
-    wp_json = get_from_wp('posts', wp_id)
-    if p = Post.where('id= ?', wp_id).first
-      p.from_wp_json(wp_json)
-    else
-      p = Post.new
-      p.from_wp_json(wp_json)
-    end
-    p.save!
-  end
 
   def from_wp_json(json)
     self.id = json["ID"]
@@ -90,11 +94,26 @@ class Post < ActiveRecord::Base
   end
 end
 ```
+And create the migration for this model:
 
+```ruby
+class CreatePosts < ActiveRecord::Migration
+  def change
+    create_table :posts do |t|
+      t.string :title
+      t.string :author
+      t.text :content
+      t.string :slug
+      t.text :excerpt
+
+      t.timestamps
+    end
+  end
+end
+```
 
 ## Todo
 
-* Extend it from Post type into other types (or make it generic).
 * Provide a Rake task to reload all data from WP (in a create-or-update fashion).
 * Publish it to Rubygems.
 
