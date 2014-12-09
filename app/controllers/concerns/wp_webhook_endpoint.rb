@@ -1,4 +1,4 @@
-module WpConnection
+module WpWebhookEndpoint
   extend ActiveSupport::Concern
 
   included do 
