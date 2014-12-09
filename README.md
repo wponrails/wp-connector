@@ -115,7 +115,7 @@ class CreatePosts < ActiveRecord::Migration
 end
 ```
 
-Create the Author class:
+Create the `Author` class:
 ```ruby
 class Author < ActiveRecord::Base
 
@@ -135,7 +135,7 @@ class Author < ActiveRecord::Base
 end
 ```
 
-And the Author migration:
+And the `Author` migration:
 ```ruby
 class CreateAuthors < ActiveRecord::Migration
   def change
