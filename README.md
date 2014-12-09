@@ -48,32 +48,19 @@ Add the wordpress json route to your rails configuration by adding the `wordpres
 ```ruby
 wordpress_url: "http://wpep.dev/?json_route="
 ```
-Here wpep.dev is the url for your Wordpress site.
+Here `wpep.dev` is the domain for your Wordpress site.
 
 
 Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
 
 ```ruby
-post "webhooks/*more" => "wp_connector#webhook"
+post "wp-connector/post_save"
 ```
 
-Create a `WpConnectorController` class (in `app/controllers/wp_connector_controller.rb`) that specifies a `webhook` action:
+Create a `WpConnectorController` class (in `app/controllers/wp_connector_controller.rb`) that specifies a `webhook` action. For example for the `Post` type:
 
 ```ruby
 class WpConnectorController < ApplicationController
-
-  include WpConnection
-
-  def webhook
-    save_async(object_name) 
-  end
-end
-```
-For example for the `Post` type:
-
-```ruby
-class WpConnectorController < ApplicationController
-
   include WpConnection
   
   def post_save
@@ -82,51 +69,38 @@ class WpConnectorController < ApplicationController
 end
 ```
 
-Create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` type:
+Create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` model:
 
 ```ruby
 class Post < ActiveRecord::Base
   include WpCache
 
-  def from_wp_json(json)
-    self.id = json["ID"]
-    self.title = json["title"]
-    self.content = json["content"]
-    self.slug = json["slug"]
-    self.excerpt = json["excerpt"]
-    self.updated_at =  json["updated"]
-    self.created_at =  json["date"]
-
+  def update_wp_cache(json)
+    # First create or update the author
     author_params = json["author"]
-    author = Author.new if !author = Author.where('id= ?', author_params["ID"]).first
-    author.from_wp_json(author_params)
-    author.save
-  end
-end
-```
-And create the migration for this model:
-
-```ruby
-class CreatePosts < ActiveRecord::Migration
-  def change
-    create_table :posts do |t|
-      t.string :title
-      t.string :author
-      t.text :content
-      t.string :slug
-      t.text :excerpt
-
-      t.timestamps
-    end
+    author = Author.find_or_create(author_params["ID"])
+    author.update_wp_cache(author_params)
+    
+    self.id         = json["ID"]
+    self.title      = json["title"]
+    self.content    = json["content"]
+    self.slug       = json["slug"]
+    self.excerpt    = json["excerpt"]
+    self.updated_at = json["updated"]
+    self.created_at = json["date"]
+    self.author     = author
+    self.save
   end
 end
 ```
 
-Create the `Author` class:
+And the examplefor the `Author` model:
+
 ```ruby
 class Author < ActiveRecord::Base
+  include WpCache
 
-  def from_wp_json(json)
+  def update_wp_cache(json)
     self.id           = json["ID"]
     self.username     = json["username"]
     self.name         = json["name"]
@@ -137,15 +111,26 @@ class Author < ActiveRecord::Base
     self.url          = json["URL"]
     self.description  = json["description"]
     self.registered   = json["registered"]
-
+    self.save
   end
 end
 ```
 
-And the `Author` migration:
+
+And create the migration for this model:
+
 ```ruby
-class CreateAuthors < ActiveRecord::Migration
+class CreatePostsAndAuthors < ActiveRecord::Migration
   def change
+    create_table :posts do |t|
+      t.string  :title
+      t.integer :author_id
+      t.text    :content
+      t.string  :slug
+      t.text    :excerpt
+      t.timestamps
+    end
+    
     create_table :authors do |t|
       t.string :username
       t.string :name
@@ -156,12 +141,12 @@ class CreateAuthors < ActiveRecord::Migration
       t.string :url
       t.string :description
       t.string :registered
-
       t.timestamps
     end
   end
 end
 ```
+
 
 
 ## Todo
