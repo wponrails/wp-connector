@@ -90,7 +90,10 @@ class Post < ActiveRecord::Base
     self.updated_at =  json["updated"]
     self.created_at =  json["date"]
 
-    # TODO add author and other related objects
+    author_params = json["author"]
+    author = Author.new if !author = Author.where('id= ?', author_params["ID"]).first
+    author.from_wp_json(author_params)
+    author.save
   end
 end
 ```
@@ -111,6 +114,48 @@ class CreatePosts < ActiveRecord::Migration
   end
 end
 ```
+
+Create the Author class:
+```ruby
+class Author < ActiveRecord::Base
+
+  def from_wp_json(json)
+    self.id           = json["ID"]
+    self.username     = json["username"]
+    self.name         = json["name"]
+    self.first_name   = json["first_name"]
+    self.last_name    = json["last_name"]
+    self.nickname     = json["nickname"]
+    self.slug         = json["slug"]
+    self.url          = json["URL"]
+    self.description  = json["description"]
+    self.registered   = json["registered"]
+
+  end
+end
+```
+
+And the Author migration:
+```ruby
+class CreateAuthors < ActiveRecord::Migration
+  def change
+    create_table :authors do |t|
+      t.string :username
+      t.string :name
+      t.string :first_name
+      t.string :last_name
+      t.string :nickname
+      t.string :slug
+      t.string :url
+      t.string :description
+      t.string :registered
+
+      t.timestamps
+    end
+  end
+end
+```
+
 
 ## Todo
 
