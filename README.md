@@ -54,7 +54,8 @@ Here `wpep.dev` is the domain for your Wordpress site.
 Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
 
 ```ruby
-post "wp-connector/post_save"
+post 'wp-connector/post_save'
+post 'wp-connector/post_delete'
 ```
 
 Create a `WpConnectorController` class (in `app/controllers/wp_connector_controller.rb`) that specifies a `webhook` action. For example for the `Post` type:
@@ -65,6 +66,10 @@ class WpConnectorController < ApplicationController
   
   def post_save
      Post.sync_cache('posts', wp_id_from_params) 
+  end
+
+  def post_delete
+    Post.purge_cache(wp_id_from_params)
   end
 end
 ```
