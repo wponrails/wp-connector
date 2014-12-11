@@ -3,7 +3,7 @@ wp-connector
 
 This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using something else (in this case a Rails application) to serve public request and provide a basis for customizations.  WPEP makes use of the following WP plugins:
 
-* [**HookPress**](https://wordpress.org/plugins/hookpress) ([site](http://mitcho.com/code/hookpress), [repo](https://github.com/mitcho/hookpress)) — WP plugin by which WP actions van be configured to trigger HTTP request to abritrary URLs (webhooks).
+* [**HookPress**](https://wordpress.org/plugins/hookpress) ([site](http://mitcho.com/code/hookpress), [repo](https://github.com/mitcho/hookpress)) — WP plugin by which WP actions can be configured to trigger HTTP request to abritrary URLs (webhooks).
 * [**json-rest-api**](https://wordpress.org/plugins/json-rest-api) ([site](http://wp-api.org), [repo](https://github.com/WP-API/WP-API)) — WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
 
 With WPEP the content's master data resides in WP, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
