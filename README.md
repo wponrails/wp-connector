@@ -13,6 +13,7 @@ The main reasons for not using WP to serve public web requests:
 * **Security** — The internet is a dangerous place and WordPress has proven to be a popular target for malicious hackers. By not serving public request from WP, but only the admin interface, the attack surface is significantly reduced.
 * **Performance** — Performance tuning WP can be difficult, especially when a generic caching-proxy (such as Varnish) is not viable due to dynamic content such as ads or personalization.  Application frameworks provide means for fine-grained caching strategies that are needed to serve high-traffic websites that contain dynamic content.
 * **Cost (TCO) of customizations** — Customizing WP, and maintaining those customizations, is laborious and error prone compared to building custom functionality on top of an application framework (which is specifically designed for that purpose).
+* **Upgrade path** — Keeping a customized WP installation up-to-date can be a pain, and WP-updates come ever more often. When WP is not used to serve public requests and customizations are not built into WP most of this pain avoided.
 
 
 
