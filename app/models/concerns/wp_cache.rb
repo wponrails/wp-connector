@@ -3,6 +3,15 @@ require 'faraday'
 module WpCache
   extend ActiveSupport::Concern
 
+  def self.included(base)
+    @classes ||= []
+    @classes << base.name
+  end
+
+  def self.classes
+    @classes
+  end
+
   module ClassMethods
     def sync_cache(wp_type, wp_id)
       WpGetWorker.perform_async(self, wp_type, wp_id)
@@ -21,6 +30,14 @@ module WpCache
       response = Faraday.get "#{Settings.wordpress_url}/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
       self.where(id: wp_id).first_or_create.update_wp_cache(wp_json)
+    end
+
+    def get_and_save_all
+      response = Faraday.get "#{Settings.wordpress_url}/#{WpCache.classes.first.pluralize.downcase}"
+      wp_json = JSON.parse(response.body)
+      wp_json.each do |json|
+        # self.where(id: wp_id).first_or_create.update_wp_cache(json)
+      end
     end
   end
 end
