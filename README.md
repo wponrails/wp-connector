@@ -157,7 +157,6 @@ end
 
 ## Todo
 
-* Provide a Rake task to reload all data from WP (in a create-or-update fashion).
 * Publish it to Rubygems.
 
 
