@@ -32,11 +32,11 @@ module WpCache
       self.where(id: wp_id).first_or_create.update_wp_cache(wp_json)
     end
 
-    def get_and_save_all
-      response = Faraday.get "#{Settings.wordpress_url}/#{WpCache.classes.first.pluralize.downcase}"
+    def get_and_save_all(wpclass)
+      response = Faraday.get "#{Settings.wordpress_url}/#{wpclass.pluralize.downcase}"
       wp_json = JSON.parse(response.body)
       wp_json.each do |json|
-        # self.where(id: wp_id).first_or_create.update_wp_cache(json)
+        self.where(id: json['ID']).first_or_create.update_wp_cache(json)
       end
     end
   end

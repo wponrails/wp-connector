@@ -4,9 +4,9 @@ namespace :wp do
     task :refresh => :environment do
       Rails.application.eager_load!
       ActiveRecord::Base.descendants
-      
-      first = WpCache.classes.first.constantize
-      wp_json = first.get_and_save_all
+      WpCache.classes.each do |wpclass|
+        wpclass.constantize.get_and_save_all(wpclass)
+      end
     end
   end
 end
