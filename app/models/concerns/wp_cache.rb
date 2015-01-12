@@ -35,9 +35,21 @@ module WpCache
     def get_and_save_all(wpclass)
       response = Faraday.get "#{Settings.wordpress_url}/#{wpclass.pluralize.downcase}"
       wp_json = JSON.parse(response.body)
+      ids = []
       wp_json.each do |json|
         self.where(id: json['ID']).first_or_create.update_wp_cache(json)
+        ids << json['ID']
       end
+
+      if !ids.empty?
+        deleted_ids = self.where.not(id: ids)
+        if !deleted_ids.empty?
+          deleted_ids.each do |deleted_id|
+            self.destroy(deleted_id)
+          end
+        end
+      end
+      
     end
   end
 end
