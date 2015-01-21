@@ -29,6 +29,11 @@ module WpCache
     def retrieve_and_update_wp_cache(wp_type, wp_id)
       response = Faraday.get "#{Settings.wordpress_url}/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
+
+      #WP API will return a 'json_no_route' code if the route is incorrect or the specified entry is none existant
+      #If so, do not 'first_or_create'
+      return if wp_json["code"] == "json_no_route"
+
       self.where(wp_id: wp_id).first_or_create.update_wp_cache(wp_json)
     end
 
