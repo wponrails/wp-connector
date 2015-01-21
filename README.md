@@ -64,9 +64,9 @@ Create a `WpConnectorController` class (in `app/controllers/wp_connector_control
 ```ruby
 class WpConnectorController < ApplicationController
   include WpConnection
-  
+
   def post_save
-     Post.sync_cache('posts', wp_id_from_params) 
+     Post.sync_cache('posts', wp_id_from_params)
   end
 
   def post_delete
@@ -86,8 +86,8 @@ class Post < ActiveRecord::Base
     author_params = json["author"]
     author = Author.find_or_create(author_params["ID"])
     author.update_wp_cache(author_params)
-    
-    self.id         = json["ID"]
+
+    self.wp_id      = json["ID"]
     self.title      = json["title"]
     self.content    = json["content"]
     self.slug       = json["slug"]
@@ -107,7 +107,7 @@ class Author < ActiveRecord::Base
   include WpCache
 
   def update_wp_cache(json)
-    self.id           = json["ID"]
+    self.wp_id        = json["ID"]
     self.username     = json["username"]
     self.name         = json["name"]
     self.first_name   = json["first_name"]
@@ -129,6 +129,7 @@ And create the migration for this model:
 class CreatePostsAndAuthors < ActiveRecord::Migration
   def change
     create_table :posts do |t|
+      t.integer :wp_id
       t.string  :title
       t.integer :author_id
       t.text    :content
@@ -136,17 +137,18 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
       t.text    :excerpt
       t.timestamps
     end
-    
+
     create_table :authors do |t|
-      t.string :username
-      t.string :name
-      t.string :first_name
-      t.string :last_name
-      t.string :nickname
-      t.string :slug
-      t.string :url
-      t.string :description
-      t.string :registered
+      t.integer :wp_id
+      t.string  :username
+      t.string  :name
+      t.string  :first_name
+      t.string  :last_name
+      t.string  :nickname
+      t.string  :slug
+      t.string  :url
+      t.string  :description
+      t.string  :registered
       t.timestamps
     end
   end
