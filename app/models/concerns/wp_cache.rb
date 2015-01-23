@@ -22,7 +22,8 @@ module WpCache
       if m
         m.destroy
       else
-        logger.warn "Could not find #{self} with id #{wp_id}."
+        false
+        # logger.warn "Could not find #{self} with id #{wp_id}."
       end
     end
 
