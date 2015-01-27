@@ -35,7 +35,7 @@ module WpCache
       #If so, do not 'first_or_create'
       return if wp_json["code"] == "json_no_route"
 
-      self.where(wp_id: wp_id).first_or_create.update_wp_cache(wp_json)
+      self.joins(:post).where(posts: {post_id: wp_id}).first_or_create.update_wp_cache(wp_json)
     end
 
     def get_and_save_all(wpclass)
