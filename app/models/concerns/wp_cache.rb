@@ -28,7 +28,9 @@ module WpCache
     end
 
     def retrieve_and_update_wp_cache(wp_type, wp_id)
-      response = Faraday.get "#{Settings.wordpress_url}/#{wp_type}/#{wp_id}"
+      return if wp_id.empty? or wp_id == ''
+
+      response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
 
       #WP API will return a 'json_no_route' code if the route is incorrect or the specified entry is none existant
@@ -39,7 +41,7 @@ module WpCache
     end
 
     def get_and_save_all(wpclass)
-      response = Faraday.get "#{Settings.wordpress_url}/#{wpclass.pluralize.downcase}"
+      response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wpclass.pluralize.downcase}"
       wp_json = JSON.parse(response.body)
       ids = []
       wp_json.each do |json|
