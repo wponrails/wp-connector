@@ -1,3 +1,5 @@
+require 'sidekiq'
+
 class WpGetWorker
   include Sidekiq::Worker
   sidekiq_options :retry => false
