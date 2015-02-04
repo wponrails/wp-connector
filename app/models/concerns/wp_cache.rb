@@ -28,7 +28,7 @@ module WpCache
     end
 
     def retrieve_and_update_wp_cache(wp_type, wp_id)
-      return if wp_id.empty? or wp_id == ''
+      return unless wp_id.is_a? Fixnum or wp_id.is_a? String
 
       response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
