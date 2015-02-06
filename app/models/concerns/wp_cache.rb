@@ -18,7 +18,7 @@ module WpCache
     end
 
     def purge_cache(wp_id)
-      m = self.find(wp_id)
+      m = self.joins(:post).where(posts: {post_id: wp_id}).first
       if m
         m.destroy
       else
