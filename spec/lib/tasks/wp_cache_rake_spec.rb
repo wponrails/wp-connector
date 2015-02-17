@@ -1,7 +1,7 @@
+# spec/lib/tasks/wp_cache_rake_spec.rb
 require 'spec_helper'
 
-# spec/lib/tasks/wp_cache_rake_spec.rb
-describe 'wp:cache:refresh', skip: true do
+describe 'rake wp:cache:refresh' do
   include_context 'rake'
 
   its(:prerequisites) { should include('environment') }
