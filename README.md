@@ -67,11 +67,11 @@ class WpConnectorController < ApplicationController
   include WpConnection
 
   def post_save
-     Post.sync_cache('posts', wp_id_from_params)
+     Post.schedule_create_or_update('posts', wp_id_from_params)
   end
 
   def post_delete
-    Post.purge_cache(wp_id_from_params)
+    Post.purge(wp_id_from_params)
   end
 end
 ```
@@ -164,6 +164,8 @@ end
 
 ## Contributing
 
+You know the drill :)
+
 1. Fork it.
 2. Create your feature branch (`git checkout -b my-new-feature`).
 3. Commit your changes (`git commit -am 'Add some feature'`).
@@ -174,6 +176,6 @@ end
 
 ## License
 
-Copyright (c) 2014, Hoppinger B.V.
+Copyright (c) 2014-2015, Hoppinger B.V.
 
-Open source, under the MIT-licensed. See `LICENSE.txt` in the root of this repository.
+All files in this repository are MIT-licensed, as specified in the [LICENSE file](https://github.com/hoppinger/wp-connector/blob/features/master/LICENSE).
