@@ -13,7 +13,7 @@ module WpCache
   end
 
   module ClassMethods
-    def sync_cache(wp_type, wp_id)
+    def schedule_create_or_update(wp_type, wp_id)
       WpGetWorker.perform_async(self, wp_type, wp_id)
     end
 
@@ -27,7 +27,7 @@ module WpCache
       end
     end
 
-    def retrieve_and_update_wp_cache(wp_type, wp_id)
+    def create_or_update(wp_type, wp_id)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
 
       response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wp_type}/#{wp_id}"
@@ -40,7 +40,7 @@ module WpCache
       self.joins(:post).where(posts: {post_id: wp_id}).first_or_create.update_wp_cache(wp_json)
     end
 
-    def get_and_save_all(wpclass)
+    def create_or_update_all(wpclass)
       response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wpclass.pluralize.downcase}"
       wp_json = JSON.parse(response.body)
       ids = []

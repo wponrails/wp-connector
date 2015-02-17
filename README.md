@@ -66,7 +66,7 @@ class WpConnectorController < ApplicationController
   include WpConnection
 
   def post_save
-     Post.sync_cache('posts', wp_id_from_params)
+     Post.schedule_create_or_update('posts', wp_id_from_params)
   end
 
   def post_delete
