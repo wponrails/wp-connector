@@ -17,7 +17,7 @@ module WpPost
     save!
   end
 
-  class << self
+  module ClassMethods
     def mappable_wordpress_attributes
       %w( slug title status content excerpt acf_fields )
     end
