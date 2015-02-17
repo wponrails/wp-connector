@@ -4,20 +4,14 @@ require 'spec_helper'
 describe 'wp:cache:refresh' do
   include_context 'rake'
 
-  before do
-    ReportGenerator.stubs(:generate)
-    UsersReport.stubs(:new => report)
-    User.stubs(:all => user_records)
-  end
+  its(:prerequisites) { should include('environment') }
 
-  its(:prerequisites) { should include("environment") }
-
-  it "generates a registrations report" do
+  it 'generates a registrations report' do
     subject.invoke
-    ReportGenerator.should have_received(:generate).with("users", csv)
+    ReportGenerator.should have_received(:generate).with('users', csv)
   end
 
-  it "creates the users report with the correct data" do
+  it 'creates the users report with the correct data' do
     subject.invoke
     UsersReport.should have_received(:new).with(user_records)
   end

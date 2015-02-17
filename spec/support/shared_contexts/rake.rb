@@ -1,7 +1,7 @@
 # spec/support/shared_contexts/rake.rb
-require "rake"
+require 'rake'
 
-shared_context "rake" do
+shared_context 'rake' do
   let(:rake)      { Rake::Application.new }
   let(:task_name) { self.class.top_level_description }
   let(:task_path) { "lib/tasks/#{task_name.split(":").first}" }
