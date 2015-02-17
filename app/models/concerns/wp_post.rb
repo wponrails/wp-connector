@@ -15,7 +15,7 @@ module WpPost
         send(wp_attribute, json[wp_attribute])
       end
 
-      self.post_id      = json['ID']
+      self.wp_id        = json['ID']
       self.author_id    = json['author']
       self.published_at = json['date']
       self.order        = json['menu_order']
