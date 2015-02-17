@@ -61,7 +61,7 @@ Installing the routes for the webhook endpoint (in `config/routes.rb` of your Ra
 ```ruby
 # wp-connector endpoints
 post   'wp-connector/:model',     to: 'wp_connector#model_save'
-delete 'wp-connector/:model/:id', to: 'wp_connector#post_delete'
+delete 'wp-connector/:model/:id', to: 'wp_connector#model_delete'
 ```
 
 Create a `WpConnectorController` class (in `app/controllers/wp_connector_controller.rb`) that specifies a `webhook` action. For example for the `Post` type:
@@ -71,17 +71,20 @@ class WpConnectorController < ApplicationController
   include WpWebhookEndpoint
   skip_before_action :verify_authenticity_token
 
-  def post_save
-     Post.schedule_create_or_update(wp_id_from_params)
+  def model_save
+    model = params[:model].classify.constantize
+    render_json_200_or_404 model.sync_cache(model_type(model).pluralize, wp_id_from_params)
   end
 
-  def post_delete
-    Post.purge_cache(wp_id_from_params)
+  def model_delete
+    model = params[:model].constantize
+    render_json_200_or_404 model.purge_cache(wp_id_from_params)
   end
 end
 ```
 
-Create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` model:
+Create a model for each of the content types that need to be cached by the Rails application.
+This is an example for the `Post` model:
 
 ```ruby
 class Post < ActiveRecord::Base
@@ -129,7 +132,7 @@ end
 ```
 
 
-And create the migration for this model:
+And create the migration for these models:
 
 ```ruby
 class CreatePostsAndAuthors < ActiveRecord::Migration
@@ -158,12 +161,6 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
   end
 end
 ```
-
-
-
-## Todo
-
-* Publish it to Rubygems.
 
 
 
