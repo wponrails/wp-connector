@@ -17,13 +17,11 @@ module WpCache
       WpGetWorker.perform_async(self, wp_type, wp_id)
     end
 
-    def purge_cache(wp_id)
-      m = self.joins(:post).where(posts: {post_id: wp_id}).first
-      if m
-        m.destroy
-      else
-        false
-        # logger.warn "Could not find #{self} with id #{wp_id}."
+    def purge(wp_id)
+      begin
+        self.joins(:post).where('posts.post_id = ?', wp_id).first!.destroy
+      rescue
+        logger.warn "Could not find #{self} with id #{wp_id}."
       end
     end
 

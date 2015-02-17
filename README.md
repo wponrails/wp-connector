@@ -70,7 +70,7 @@ class WpConnectorController < ApplicationController
   end
 
   def post_delete
-    Post.purge_cache(wp_id_from_params)
+    Post.purge(wp_id_from_params)
   end
 end
 ```
