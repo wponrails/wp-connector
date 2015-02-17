@@ -3,13 +3,18 @@ require 'faraday'
 module WpCache
   extend ActiveSupport::Concern
 
-  def self.included(base)
-    @classes ||= []
-    @classes << base.name
-  end
+  # Class methods
+  class << self
+    # Collect all class names in a class variable so that it can be accessed by the rake task
+    def included(base)
+      @classes ||= []
+      @classes << base.name
+    end
 
-  def self.classes
-    @classes
+    # Returns an array WpCache classes
+    def classes
+      @classes
+    end
   end
 
   module ClassMethods
@@ -27,7 +32,6 @@ module WpCache
 
     def create_or_update(wp_type, wp_id)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
-
       response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
 
