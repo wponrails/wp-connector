@@ -18,6 +18,17 @@ module WpWebhookEndpoint
     # the actual ID used by WP in case multiple versions exist.
     params[:parent_ID] || params[:ID]
   end
+  
+  #
+  # Convenience method for rendering the most common JSON responses.
+  #
+  def render_json_200_or_404(success)
+    if success
+      render json: {status: 200, message: 'OK'}
+    else
+      render json: {status: 404, message: 'Not found'}
+    end
+  end
 
   def require_valid_api_key
     head :unauthorized unless params[:api_key] == Rails.configuration.x.wp_connector_api_key
