@@ -20,7 +20,7 @@ module WpCache
 
     def purge(wp_id)
       begin
-        self.joins(:post).where('posts.post_id = ?', wp_id).first!.destroy
+        joins(:post).where('posts.post_id = ?', wp_id).first!.destroy
       rescue
         logger.warn "Could not find #{ self } with id #{ wp_id }."
       end
@@ -41,11 +41,11 @@ module WpCache
       wp_json = JSON.parse(response.body)
       ids = []
       wp_json.each do |json|
-        self.where(wp_id: json['ID']).first_or_create.update_wp_cache(json)
+        where(wp_id: json['ID']).first_or_create.update_wp_cache(json)
         ids << json['ID']
       end
 
-      self.where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+      where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
     end
   end
 end
