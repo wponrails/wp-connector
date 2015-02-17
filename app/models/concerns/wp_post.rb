@@ -6,7 +6,7 @@ module WpPost
   end
 
   def update_post(json)
-    mappable_wordpress_attributes.each do |wp_attribute|
+    self.class.mappable_wordpress_attributes.each do |wp_attribute|
       send(wp_attribute, json[wp_attribute])
     end
 
