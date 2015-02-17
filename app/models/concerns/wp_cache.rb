@@ -62,8 +62,7 @@ module WpCache
     # Purge a cached piece of content, while logging any exceptions.
     #
     def purge(wp_id)
-      # FIXME (cies): Post type will go
-      joins(:post).where('posts.post_id = ?', wp_id).first!.destroy
+      where(wp_id: wp_id).first!.destroy
     rescue
       logger.warn "Could not purge #{self} with id #{wp_id}, no record with that id was found."
     end
