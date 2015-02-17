@@ -16,40 +16,45 @@ module WpCache
     def sync_cache(wp_type, wp_id)
       WpGetWorker.perform_async(self, wp_type, wp_id)
     end
-  
+
     def purge_cache(wp_id)
-      m = self.find(wp_id)
+      m = self.joins(:post).where(posts: {post_id: wp_id}).first
       if m
         m.destroy
       else
-        logger.warn "Could not find #{self} with id #{wp_id}."
+        false
+        # logger.warn "Could not find #{self} with id #{wp_id}."
       end
     end
-    
+
     def retrieve_and_update_wp_cache(wp_type, wp_id)
-      response = Faraday.get "#{Settings.wordpress_url}/#{wp_type}/#{wp_id}"
+      return unless wp_id.is_a? Fixnum or wp_id.is_a? String
+
+      response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
-      self.where(id: wp_id).first_or_create.update_wp_cache(wp_json)
+
+      #WP API will return a 'json_no_route' code if the route is incorrect or the specified entry is none existant
+      #If so, do not 'first_or_create'
+      return if wp_json["code"] == "json_no_route"
+
+      self.joins(:post).where(posts: {post_id: wp_id}).first_or_create.update_wp_cache(wp_json)
     end
 
     def get_and_save_all(wpclass)
-      response = Faraday.get "#{Settings.wordpress_url}/#{wpclass.pluralize.downcase}"
+      response = Faraday.get "#{Settings.wordpress_url}?json_route=/#{wpclass.pluralize.downcase}"
       wp_json = JSON.parse(response.body)
       ids = []
       wp_json.each do |json|
-        self.where(id: json['ID']).first_or_create.update_wp_cache(json)
+        self.where(wp_id: json['ID']).first_or_create.update_wp_cache(json)
         ids << json['ID']
       end
 
-      if !ids.empty?
-        deleted_ids = self.where.not(id: ids)
-        if !deleted_ids.empty?
-          deleted_ids.each do |deleted_id|
-            self.destroy(deleted_id)
-          end
+      unless ids.empty?
+        deleted_ids = self.where.not(wp_id: ids)
+        unless deleted_ids.empty?
+          deleted_ids.each { |id| self.destroy(id) }
         end
       end
-      
     end
   end
 end

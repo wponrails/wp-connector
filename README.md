@@ -64,9 +64,9 @@ Create a `WpConnectorController` class (in `app/controllers/wp_connector_control
 ```ruby
 class WpConnectorController < ApplicationController
   include WpConnection
-  
+
   def post_save
-     Post.sync_cache('posts', wp_id_from_params) 
+     Post.sync_cache('posts', wp_id_from_params)
   end
 
   def post_delete
@@ -86,7 +86,7 @@ class Post < ActiveRecord::Base
     author_params = json["author"]
     author = Author.find_or_create(author_params["ID"])
     author.update_wp_cache(author_params)
-    
+
     self.id         = json["ID"]
     self.title      = json["title"]
     self.content    = json["content"]
@@ -136,7 +136,7 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
       t.text    :excerpt
       t.timestamps
     end
-    
+
     create_table :authors do |t|
       t.string :username
       t.string :name
@@ -163,6 +163,8 @@ end
 
 ## Contributing
 
+You know the drill :)
+
 1. Fork it.
 2. Create your feature branch (`git checkout -b my-new-feature`).
 3. Commit your changes (`git commit -am 'Add some feature'`).
@@ -173,6 +175,6 @@ end
 
 ## License
 
-Copyright (c) 2014, Hoppinger B.V.
+Copyright (c) 2014-2015, Hoppinger B.V.
 
-Open source, under the MIT-licensed. See `LICENSE.txt` in the root of this repository.
+All files in this repository are MIT-licensed, as specified in the [LICENSE file](https://github.com/hoppinger/wp-connector/blob/features/master/LICENSE).
