@@ -3,20 +3,25 @@ require 'faraday'
 module WpCache
   extend ActiveSupport::Concern
 
-  def self.included(base)
-    @classes ||= []
-    @classes << base.name
-  end
+  # Class methods
+  class << self
+    # Collect all class names in a class variable so that it can be accessed by the rake task
+    def included(base)
+      @classes ||= []
+      @classes << base.name
+    end
 
-  def self.classes
-    @classes
+    # Returns an array WpCache classes
+    def classes
+      @classes
+    end
   end
 
   module ClassMethods
     def sync_cache(wp_type, wp_id)
       WpGetWorker.perform_async(self, wp_type, wp_id)
     end
-  
+
     def purge_cache(wp_id)
       m = self.find(wp_id)
       if m
@@ -25,7 +30,7 @@ module WpCache
         logger.warn "Could not find #{self} with id #{wp_id}."
       end
     end
-    
+
     def retrieve_and_update_wp_cache(wp_type, wp_id)
       response = Faraday.get "#{Settings.wordpress_url}/#{wp_type}/#{wp_id}"
       wp_json = JSON.parse(response.body)
@@ -49,7 +54,7 @@ module WpCache
           end
         end
       end
-      
+
     end
   end
 end
