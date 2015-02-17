@@ -23,8 +23,8 @@ module WpCache
     #
     # Schedules a `create_or_update` call to itself.
     #
-    def schedule_create_or_update(wp_type, wp_id)
-      WpApiWorker.perform_async(self, wp_type, wp_id)
+    def schedule_create_or_update(wp_id)
+      WpApiWorker.perform_async(self, wp_id)
     end
 
     #

@@ -9,7 +9,7 @@ class WpApiWorker
   include Sidekiq::Worker
   sidekiq_options :retry => false
 
-  def perform(model_name, wp_type, wp_id)
-    model_name.constantize.create_or_update(wp_type, wp_id)
+  def perform(klass, wp_id)
+    klass.constantize.create_or_update(klass.to_s.underscore, wp_id)
   end
 end
