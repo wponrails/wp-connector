@@ -20,7 +20,7 @@ module WpCache
 
     def purge(wp_id)
       begin
-        joins(:post).where('posts.post_id = ?', wp_id).first!.destroy
+        find(wp_id).first!.destroy
       rescue
         logger.warn "Could not find #{ self } with id #{ wp_id }."
       end
@@ -33,7 +33,7 @@ module WpCache
       #WP API will return a 'json_no_route' code if the route is incorrect or the specified entry is none existant
       #If so, do not 'first_or_create'
       return if wp_json["code"] == "json_no_route"
-      joins(:post).where(posts: { post_id: wp_id }).first_or_create.update_wp_cache(wp_json)
+      where(id: wp_id).first_or_create.update_wp_cache(wp_json)
     end
 
     def create_or_update_all(wpclass)
@@ -41,7 +41,7 @@ module WpCache
       wp_json = JSON.parse(response.body)
       ids = []
       wp_json.each do |json|
-        where(wp_id: json['ID']).first_or_create.update_wp_cache(json)
+        find(wp_id).first_or_create.update_wp_cache(json)
         ids << json['ID']
       end
 
