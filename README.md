@@ -73,12 +73,12 @@ class WpConnectorController < ApplicationController
 
   def model_save
     model = params[:model].classify.constantize
-    render_json_200_or_404 model.sync_cache(model_type(model).pluralize, wp_id_from_params)
+    render_json_200_or_404 model.schedule_create_or_update(wp_id_from_params)
   end
 
   def model_delete
     model = params[:model].constantize
-    render_json_200_or_404 model.purge_cache(wp_id_from_params)
+    render_json_200_or_404 model.purge(wp_id_from_params)
   end
 end
 ```
@@ -89,21 +89,13 @@ This is an example for the `Post` model:
 ```ruby
 class Post < ActiveRecord::Base
   include WpCache
+  include WpPost
 
   def update_wp_cache(json)
-    # First create or update the author
-    author_params = json["author"]
-    author = Author.find_or_create(author_params["ID"])
-    author.update_wp_cache(author_params)
-
-    self.id         = json["ID"]
-    self.title      = json["title"]
-    self.content    = json["content"]
-    self.slug       = json["slug"]
-    self.excerpt    = json["excerpt"]
-    self.updated_at = json["updated"]
-    self.created_at = json["date"]
-    self.author     = author
+    update_post(json)
+    author = Author.find_or_create(json["author"]["ID"])
+    author.update_wp_cache(json["author"])
+    self.author = author
     self.save
   end
 end
@@ -114,15 +106,15 @@ And the examplefor the `Author` model:
 ```ruby
 class Author < ActiveRecord::Base
   include WpCache
+  include WpPost
 
   def update_wp_cache(json)
-    self.id           = json["ID"]
+    update_post(json)
     self.username     = json["username"]
     self.name         = json["name"]
     self.first_name   = json["first_name"]
     self.last_name    = json["last_name"]
     self.nickname     = json["nickname"]
-    self.slug         = json["slug"]
     self.url          = json["URL"]
     self.description  = json["description"]
     self.registered   = json["registered"]
@@ -138,6 +130,7 @@ And create the migration for these models:
 class CreatePostsAndAuthors < ActiveRecord::Migration
   def change
     create_table :posts do |t|
+      t.integer :wp_id
       t.string  :title
       t.integer :author_id
       t.text    :content
@@ -147,15 +140,16 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
     end
 
     create_table :authors do |t|
-      t.string :username
-      t.string :name
-      t.string :first_name
-      t.string :last_name
-      t.string :nickname
-      t.string :slug
-      t.string :url
-      t.string :description
-      t.string :registered
+      t.integer :wp_id
+      t.string  :username
+      t.string  :name
+      t.string  :first_name
+      t.string  :last_name
+      t.string  :nickname
+      t.string  :slug
+      t.string  :url
+      t.string  :description
+      t.string  :registered
       t.timestamps
     end
   end
