@@ -54,6 +54,12 @@ Rails.configuration.x.wordpress_url="http://wpep.dev/"
 ```
 Here `wpep.dev` is the domain for your Wordpress site.
 
+Add the WordPress API key to Rails configuration by adding the `wp_connector_api_key` config option to your environment file in `config/environments` (e.g. `config/environments/development.rb`):
+```ruby
+Rails.configuration.x.wp_connector_api_key="H3O5P6P1I5N8G8E4R"
+```
+Here `wpep.dev` is the domain for your Wordpress site.
+
 
 Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
 
