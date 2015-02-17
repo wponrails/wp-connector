@@ -28,7 +28,7 @@ module WpCache
 
     def create_or_update(wp_type, wp_id)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
-      response = Faraday.get "#{ Settings.wordpress_url }?json_route=/#{ wp_type }/#{ wp_id }"
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ wp_type }/#{ wp_id }"
       wp_json = JSON.parse(response.body)
       #WP API will return a 'json_no_route' code if the route is incorrect or the specified entry is none existant
       #If so, do not 'first_or_create'
@@ -37,7 +37,7 @@ module WpCache
     end
 
     def create_or_update_all(wpclass)
-      response = Faraday.get "#{ Settings.wordpress_url }?json_route=/#{ wpclass.pluralize.downcase }"
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ wpclass.pluralize.downcase }"
       wp_json = JSON.parse(response.body)
       ids = []
       wp_json.each do |json|
