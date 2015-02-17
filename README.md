@@ -45,9 +45,10 @@ When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin
 
 In WordPress configure the "Webhooks" (provided by HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URLs of the Webhooks to the `post_save` route in the Rails app.
 
-Add the wordpress json route to your rails configuration by adding the `wordpress_url` config option to your settings file in `config/settings` (e.g. `config/settings/development.yml`):
+Add the wordpress json route to your rails configuration by adding the `wordpress_url` config option to your environment file in `config/environments` (e.g.
+ `config/environments/development.rb`):
 ```ruby
-wordpress_url: "http://wpep.dev/?json_route="
+config.x.wordpress_url: "http://wpep.dev/?json_route="
 ```
 Here `wpep.dev` is the domain for your Wordpress site.
 
