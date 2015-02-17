@@ -87,7 +87,7 @@ class Post < ActiveRecord::Base
     author = Author.find_or_create(author_params["ID"])
     author.update_wp_cache(author_params)
 
-    self.wp_id      = json["ID"]
+    self.id         = json["ID"]
     self.title      = json["title"]
     self.content    = json["content"]
     self.slug       = json["slug"]
@@ -107,7 +107,7 @@ class Author < ActiveRecord::Base
   include WpCache
 
   def update_wp_cache(json)
-    self.wp_id        = json["ID"]
+    self.id           = json["ID"]
     self.username     = json["username"]
     self.name         = json["name"]
     self.first_name   = json["first_name"]
@@ -129,7 +129,6 @@ And create the migration for this model:
 class CreatePostsAndAuthors < ActiveRecord::Migration
   def change
     create_table :posts do |t|
-      t.integer :wp_id
       t.string  :title
       t.integer :author_id
       t.text    :content
@@ -139,16 +138,15 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
     end
 
     create_table :authors do |t|
-      t.integer :wp_id
-      t.string  :username
-      t.string  :name
-      t.string  :first_name
-      t.string  :last_name
-      t.string  :nickname
-      t.string  :slug
-      t.string  :url
-      t.string  :description
-      t.string  :registered
+      t.string :username
+      t.string :name
+      t.string :first_name
+      t.string :last_name
+      t.string :nickname
+      t.string :slug
+      t.string :url
+      t.string :description
+      t.string :registered
       t.timestamps
     end
   end
@@ -165,6 +163,8 @@ end
 
 ## Contributing
 
+You know the drill :)
+
 1. Fork it.
 2. Create your feature branch (`git checkout -b my-new-feature`).
 3. Commit your changes (`git commit -am 'Add some feature'`).
@@ -175,6 +175,6 @@ end
 
 ## License
 
-Copyright (c) 2014, Hoppinger B.V.
+Copyright (c) 2014-2015, Hoppinger B.V.
 
-Open source, under the MIT-licensed. See `LICENSE.txt` in the root of this repository.
+All files in this repository are MIT-licensed, as specified in the [LICENSE file](https://github.com/hoppinger/wp-connector/blob/features/master/LICENSE).
