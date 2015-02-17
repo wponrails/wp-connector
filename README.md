@@ -45,9 +45,10 @@ When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin
 
 In WordPress configure the "Webhooks" (provided by HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URLs of the Webhooks to the `post_save` route in the Rails app.
 
-Add the wordpress json route to your rails configuration by adding the `wordpress_url` config option to your settings file in `config/settings` (e.g. `config/settings/development.yml`):
+Add the wordpress json route to your rails configuration by adding the `wordpress_url` config option to your environment file in `config/environments` (e.g.
+ `config/environments/development.rb`):
 ```ruby
-wordpress_url: "http://wpep.dev/?json_route="
+config.x.wordpress_url: "http://wpep.dev/?json_route="
 ```
 Here `wpep.dev` is the domain for your Wordpress site.
 
@@ -64,9 +65,9 @@ Create a `WpConnectorController` class (in `app/controllers/wp_connector_control
 ```ruby
 class WpConnectorController < ApplicationController
   include WpConnection
-  
+
   def post_save
-     Post.sync_cache('posts', wp_id_from_params) 
+     Post.sync_cache('posts', wp_id_from_params)
   end
 
   def post_delete
@@ -86,7 +87,7 @@ class Post < ActiveRecord::Base
     author_params = json["author"]
     author = Author.find_or_create(author_params["ID"])
     author.update_wp_cache(author_params)
-    
+
     self.id         = json["ID"]
     self.title      = json["title"]
     self.content    = json["content"]
@@ -136,7 +137,7 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
       t.text    :excerpt
       t.timestamps
     end
-    
+
     create_table :authors do |t|
       t.string :username
       t.string :name
