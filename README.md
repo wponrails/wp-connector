@@ -42,49 +42,49 @@ Then execute `bundle install`.
 
 ## Usage
 
-In WordPress install both the HookPress and json-rest-api plugin.
+In WordPress install both the `wp-relinquish` and `json-rest-api` plugin. The wonderful ACF plugin should work out-of-the-box with `wp-relinquish`.  The `wp-relinquish` plugin needs some configuration, as specified in the README of that project.
 
-When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin that can be found in this repository (find it in `wordpress/plugin`).
-
-In WordPress configure the "Webhooks" (provided by HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URLs of the Webhooks to the `post_save` route in the Rails app.
-
-Add the WordPress JSON route to your Rails configuration by adding the `wordpress_url` config option to your environment file in `config/environments` (e.g. `config/environments/development.rb`):
+Add the "JSON route" of the WP REST API to your Rails configuration by adding the `wordpress_url` config option to your environment files in `config/environments/` (e.g. `config/environments/development.rb`):
 ```ruby
-Rails.configuration.x.wordpress_url="http://wpep.dev/"
+Rails.configuration.x.wordpress_url="http://wordpress-site.dev/"
 ```
-Here `wpep.dev` is the domain for your Wordpress site.
+Here `wordpress-site.dev` is the domain for your Wordpress site.
 
-Add the WordPress API key to Rails configuration by adding the `wp_connector_api_key` config option to your environment file in `config/environments` (e.g. `config/environments/development.rb`):
+Also specify the wp-connector API key in the Rails configuration by adding the `wp_connector_api_key` config option to the same environment files in `config/environments/` (e.g. `config/environments/development.rb`):
 ```ruby
 Rails.configuration.x.wp_connector_api_key="H3O5P6P1I5N8G8E4R"
 ```
-Here `wpep.dev` is the domain for your Wordpress site.
 
 
-Installing a route for the webhook endpoint (in `config/routes.rb` of your Rails app):
+Installing the routes for the webhook endpoint (in `config/routes.rb` of your Rails app):
 
 ```ruby
-post 'wp-connector/post_save'
-post 'wp-connector/post_delete'
+# wp-connector endpoints
+post   'wp-connector/:model',     to: 'wp_connector#model_save'
+delete 'wp-connector/:model/:id', to: 'wp_connector#model_delete'
 ```
 
 Create a `WpConnectorController` class (in `app/controllers/wp_connector_controller.rb`) that specifies a `webhook` action. For example for the `Post` type:
 
 ```ruby
 class WpConnectorController < ApplicationController
-  include WpConnection
+  include WpWebhookEndpoint
+  skip_before_action :verify_authenticity_token
 
-  def post_save
-     Post.schedule_create_or_update(wp_id_from_params)
+  def model_save
+    model = params[:model].classify.constantize
+    render_json_200_or_404 model.sync_cache(model_type(model).pluralize, wp_id_from_params)
   end
 
-  def post_delete
-    Post.purge_cache(wp_id_from_params)
+  def model_delete
+    model = params[:model].constantize
+    render_json_200_or_404 model.purge_cache(wp_id_from_params)
   end
 end
 ```
 
-Create a model for each of the content types that you want to cache by the Rails application. This is an example for the `Post` model:
+Create a model for each of the content types that need to be cached by the Rails application.
+This is an example for the `Post` model:
 
 ```ruby
 class Post < ActiveRecord::Base
@@ -132,7 +132,7 @@ end
 ```
 
 
-And create the migration for this model:
+And create the migration for these models:
 
 ```ruby
 class CreatePostsAndAuthors < ActiveRecord::Migration
@@ -161,12 +161,6 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
   end
 end
 ```
-
-
-
-## Todo
-
-* Publish it to Rubygems.
 
 
 

@@ -33,10 +33,9 @@ module WpCache
     #
     def create_or_update(wp_type, wp_id)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ wp_type }/#{ wp_id }"
-      wp_json = JSON.parse(response.body)
-      #WP API will return a 'json_no_route' code if the route is incorrect or the specified entry is none existant
-      #If so, do not 'first_or_create'
+      wp_json = get_from_wp_api "#{ wp_type }/#{ wp_id }"
+      # WP API will return a 'json_no_route' code if the route is incorrect or
+      # the specified entry is none existant. If so return early.
       return if wp_json["code"] == "json_no_route"
       where(wp_id: wp_id).first_or_create.update_wp_cache(wp_json)
     end
@@ -65,6 +64,16 @@ module WpCache
       where(wp_id: wp_id).first!.destroy
     rescue
       logger.warn "Could not purge #{self} with id #{wp_id}, no record with that id was found."
+    end
+
+    private
+
+    #
+    # Convenience method for calling the WP API.
+    #
+    def get_from_wp_api(route)
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
+      JSON.parse(response.body)
     end
   end
 end
