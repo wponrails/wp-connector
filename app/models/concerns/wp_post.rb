@@ -11,7 +11,7 @@ module WpPost
     end
 
     self.wp_id        = json['ID']
-    self.author_id    = json['author']
+    self.author_id    = json['author']['ID']
     self.published_at = json['date']
     self.order        = json['menu_order']
     save!
