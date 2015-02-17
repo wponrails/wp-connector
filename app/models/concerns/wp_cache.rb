@@ -49,12 +49,7 @@ module WpCache
         ids << json['ID']
       end
 
-      unless ids.empty?
-        deleted_ids = self.where.not(wp_id: ids)
-        unless deleted_ids.empty?
-          deleted_ids.each { |id| self.destroy(id) }
-        end
-      end
+      self.where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
     end
   end
 end
