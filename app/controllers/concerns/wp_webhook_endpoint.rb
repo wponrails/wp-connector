@@ -5,6 +5,11 @@
 module WpWebhookEndpoint
   extend ActiveSupport::Concern
 
+  before_action :require_valid_api_key
+
+
+  private
+
   #
   # Convenience method for finding the `wp_id` of an incoming POST request.
   #
@@ -12,5 +17,9 @@ module WpWebhookEndpoint
     # The `parent_ID` has precedence over `ID` as the former contains
     # the actual ID used by WP in case multiple versions exist.
     params[:parent_ID] || params[:ID]
+  end
+
+  def require_valid_api_key
+    head :unauthorized unless params[:api_key] == Rails.configuration.x.wp_connector_api_key
   end
 end
