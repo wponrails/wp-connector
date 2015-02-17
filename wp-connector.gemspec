@@ -6,10 +6,12 @@ require 'wp-connector/version'
 Gem::Specification.new do |spec|
   spec.name          = "wp-connector"
   spec.version       = WpConnector::VERSION
-  spec.authors       = ["janmetten"]
-  spec.email         = ["janmetten@hoppinger.com"]
-  spec.summary       = %q{Gem for getting data out of Wordpress}
-  spec.homepage      = ""
+  spec.authors       = ["Jan Metten", "Sebastiaan de Geus", "Jeroen Rietveld", "Dunya Kirkali", "Cies Breijs"]
+  spec.email         = ["janmetten@AThoppinger.com", "sebastiaan@AThoppinger.com",
+                        "jeroenrietveld@AThoppinger.com", "dunya@AThoppinger.com",
+                        "cies@AThoppinger.com"]
+  spec.summary       = %q{Use Rails on top of WP: Manage content from WP; customize, extend, optimize and serve the visitors from Rails.}
+  spec.homepage      = "https://github.com/hoppinger/wp-connector"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

@@ -1,27 +1,30 @@
 wp-connector
 ============
 
-This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using something else (in this case a Rails application) to serve public request and provide a basis for customizations.  WPEP makes use of the following WP plugins:
+This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using *something else* (in this case a Rails application) to serve public request and provide a basis for customizations.  WPEP makes use of the following WP plugins:
 
-* [**HookPress**](https://wordpress.org/plugins/hookpress) ([site](http://mitcho.com/code/hookpress), [repo](https://github.com/mitcho/hookpress)) — WP plugin by which WP actions can be configured to trigger HTTP request to abritrary URLs (webhooks).
+* [**wp-relinquish**](https://github.com/hoppinger/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
 * [**json-rest-api**](https://wordpress.org/plugins/json-rest-api) ([site](http://wp-api.org), [repo](https://github.com/WP-API/WP-API)) — WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
 
-With WPEP the content's master data resides in WP, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
+With WPEP the content's *master data* resides in WP, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
 
 The main reasons for not using WP to serve public web requests:
 
-* **Security** — The internet is a dangerous place and WordPress has proven to be a popular target for malicious hackers. By not serving public request from WP, but only the admin interface, the attack surface is significantly reduced.
-* **Performance** — Performance tuning WP can be difficult, especially when a generic caching-proxy (such as Varnish) is not viable due to dynamic content such as ads or personalization.  Application frameworks provide means for fine-grained caching strategies that are needed to serve high-traffic websites that contain dynamic content.
-* **Cost (TCO) of customizations** — Customizing WP, and maintaining those customizations, is laborious and error prone compared to building custom functionality on top of an application framework (which is specifically designed for that purpose).
+* **Security** — The internet is a dangerous place and WordPress has proven to be a popular target for malicious hackers. By not serving public requests from WP, but only the admin interface, the attack surface is significantly reduced.
+* **Performance** — Performance tuning WP can be difficult, especially when a generic caching-proxy (such as Varnish) is not viable due to dynamic content such as ads or personalization.  Application frameworks provide means for fine-grained caching strategies that are needed to serve high-traffic websites containing dynamic content.
+* **Cost (TCO) of customizations** — Customizing WP, and maintaining those customizations, is costly (laborious) and risky (error prone) compared to building custom functionality on top of an application framework (which is specifically designed for that purpose).
 * **Upgrade path** — Keeping a customized WP installation up-to-date can be a pain, and WP-updates come ever more often. When WP is not used to serve public requests and customizations are not built into WP most of this pain avoided.
-
+* **Modern browser interfaces** — The new bread of JavaScript UI libraries (such as [React.js](http://facebook.github.io/react) and [Angular](https://angularjs.org)) have features like "isomorphism" (allowing JS views to be pre-rendered on the server) and data-binding. These features need *custom* server-side code and usually consume custom JSON data instead of HTML. The Rails community provides many tools to facilitate these new UI libraries from the server-side.
 
 
 ## How it works
 
-After the Rails application receives the webhook call from WP, simply notifying that some content is created or modified, a delayed job to fetch the content is scheduled using [Sidekiq](http://sidekiq.org).  The content is not fetch immediately, but a fraction of a second later, for two reason: (1) the webhook call is synchronous, responding as soon as possible is needed to keep the admin interface of WP responsive, and (2) it is not guaranteed that all processing has is complete by the time the webhook call is made.
+After the Rails application receives the webhook call from WP, simply notifying that some content is created or modified, a delayed job to fetch the content is scheduled using [Sidekiq](http://sidekiq.org).  The content is not fetched immediately, but scheduled for a fraction of a second later, the reason for this is twofold:
 
-The delayed job fetches the relevant content from WP using WP's REST-API (this can be one or more requests), then possibly transforms and/or enriches the data, and finally stores it using a regular ActiveRecord model. The logic for the fetch and transform/enrich steps is simply part of the ActiveRecord model definition.
+1. The webhook call is synchronous, responding as soon as possible is needed to keep the admin interface of WP responsive.
+2. It is not guaranteed that all WP's processing is complete (some actions may still fire) by the time the webhook call is made.
+
+The delayed job fetches the relevant content from WP using the [WP-REST-API](http://wp-api.org) (this can be one or more requests), then possibly transforms and/or enriches the data, and finally stores it using a regular ActiveRecord model. The logic for the fetch and transform/enrich steps is simply part of the ActiveRecord model definition.
 
 
 
@@ -45,10 +48,9 @@ When using the wonderful ACF plugin, consider installing the `wp-api-acf` plugin
 
 In WordPress configure the "Webhooks" (provided by HookPress) from the admin backend. Make sure that it triggers webhook calls for all changes in the content that is to be served from the Rails app.  The Webhook action needs to send at least the `ID` and `Parent_ID` fields, other fields generally not needed.  Point the target URLs of the Webhooks to the `post_save` route in the Rails app.
 
-Add the wordpress json route to your rails configuration by adding the `wordpress_url` config option to your environment file in `config/environments` (e.g.
- `config/environments/development.rb`):
+Add the WordPress JSON route to your Rails configuration by adding the `wordpress_url` config option to your settings file in `config/settings` (e.g. `config/settings/development.yml`):
 ```ruby
-config.x.wordpress_url: "http://wpep.dev/?json_route="
+wordpress_url: "http://wpep.dev/?json_route="
 ```
 Here `wpep.dev` is the domain for your Wordpress site.
 
@@ -67,11 +69,11 @@ class WpConnectorController < ApplicationController
   include WpConnection
 
   def post_save
-     Post.schedule_create_or_update('posts', wp_id_from_params)
+     Post.sync_cache('posts', wp_id_from_params)
   end
 
   def post_delete
-    Post.purge(wp_id_from_params)
+    Post.purge_cache(wp_id_from_params)
   end
 end
 ```
