@@ -47,13 +47,13 @@ module WpCache
     # the `update_wp_cache` instance method.
     # Removes records with unknown IDs.
     #
-    def create_or_update_all(wp_class)
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ wp_class.pluralize.downcase }"
+    def create_or_update_all
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ self.to_s.underscore.pluralize }"
       wp_json = JSON.parse(response.body)
-      ids = []
-      wp_json.each do |json|
-        find(wp_id).first_or_create.update_wp_cache(json)
-        ids << json['ID']
+      ids = wp_json.map do |json|
+        wp_id = json['ID']
+        where(wp_id: wp_id).first_or_create.update_wp_cache(json)
+        wp_id
       end
       where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
     end
