@@ -1,16 +1,13 @@
-require 'bundler/setup'
-Bundler.setup
-
-require File.join(File.dirname(__FILE__), '..', '..', 'app', 'workers', 'wp_api_worker')
+require 'spec_helper'
 
 describe WpApiWorker do
 
-  xit { is_expected.to be_processed_in :default }
-  xit { is_expected.to be_retryable false }
-  xit { is_expected.to be_unique }
+  it { is_expected.to be_processed_in :default }
+  it { is_expected.to be_retryable false }
+  it { is_expected.to be_unique }
 
-  xit 'calls create_or_update_all on model' do
-    subject.perform
+  it 'calls create_or_update_all on model' do
+    subject.perform('Post', 12)
     expect().to have_enqueued_job('Awesome', true)
   end
 end
