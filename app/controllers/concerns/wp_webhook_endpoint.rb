@@ -5,8 +5,9 @@
 module WpWebhookEndpoint
   extend ActiveSupport::Concern
 
-  before_action :require_valid_api_key
-
+  def self.included(base)
+    base.before_action :require_valid_api_key
+  end
 
   private
 
