@@ -166,7 +166,7 @@ Therefore the wp_type of a rails model can be overridden with the `wp_type` clas
 
 ```ruby
 class Author < ActiveRecord::Base
-  #Methods excluded for brevity
+  #Code excluded for brevity
 
   def self.wp_type
     'wp_post_type_name'
