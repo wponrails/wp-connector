@@ -1,7 +1,7 @@
 module WpTerm
   extend ActiveSupport::Concern
 
-  def update_post(json)
+  def update_term(json)
     self.class.mappable_wordpress_attributes.each do |wp_attribute|
       send("#{wp_attribute}=", json[wp_attribute])
     end
