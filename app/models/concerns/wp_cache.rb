@@ -34,9 +34,9 @@ module WpCache
     def create_or_update(wp_type, wp_id)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
       wp_json = get_from_wp_api "#{ wp_type }/#{ wp_id }"
-      # WP API will return a 'json_no_route' code if the route is incorrect or
+      # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
-      return if wp_json["code"] == "json_no_route"
+      return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
       where(wp_id: wp_id).first_or_create.update_wp_cache(wp_json)
     end
 
@@ -74,6 +74,13 @@ module WpCache
     def get_from_wp_api(route)
       response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
       JSON.parse(response.body)
+    end
+
+    #
+    # List of invalid api responses
+    #
+    def invalid_api_responses
+      %w( json_no_route json_post_invalid_type )
     end
   end
 end
