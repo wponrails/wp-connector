@@ -156,6 +156,27 @@ class CreatePostsAndAuthors < ActiveRecord::Migration
 end
 ```
 
+wp-connector assumes the model name is the same as the wp post type name.
+This means the API call for, for example, the author becomes:
+
+`http://wordpress-site.dev/?json_route=/authors/{id}`
+
+However, in some cases the model names do not correspond.
+Therefore the wp_type of a rails model can be overridden with the `wp_type` class method.
+
+```ruby
+class Author < ActiveRecord::Base
+  #Methods excluded for brevity
+
+  def self.wp_type
+    'wp_post_type_name'
+  end
+end
+```
+
+Resulting in the following API call:
+
+`http://wordpress-site.dev/?json_route=/wp_post_type_name/{id}`
 
 
 ## Contributing
