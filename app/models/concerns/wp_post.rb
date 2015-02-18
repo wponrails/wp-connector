@@ -20,5 +20,9 @@ module WpPost
     def mappable_wordpress_attributes
       %w( slug title status content excerpt acf_fields )
     end
+
+    def wp_type
+      self.to_s.underscore.pluralize
+    end
   end
 end

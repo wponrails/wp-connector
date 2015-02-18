@@ -10,6 +10,6 @@ class WpApiWorker
   sidekiq_options :retry => false
 
   def perform(klass, wp_id)
-    klass.constantize.create_or_update(klass.to_s.underscore.pluralize, wp_id)
+    klass.constantize.create_or_update(klass.constantize.wp_type, wp_id)
   end
 end
