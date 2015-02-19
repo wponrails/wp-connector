@@ -7,7 +7,7 @@ module WpTerm
     end
 
     self.wp_id        = json['ID']
-    self.parent       = update_term(json['parent'])
+    self.parent       = update_term(json['parent']) if json['parent']
     save!
   end
 
