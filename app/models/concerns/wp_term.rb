@@ -8,8 +8,8 @@ module WpTerm
 
     self.wp_id        = json['ID']
     if json['parent']
-      self.update_term(json['parent'])
-      self.parent_id = self.class.where('wp_id = ?', json['parent']['ID']).id
+      update_term(json['parent'])
+      self.parent_id = self.class.where('wp_id = ?', json['parent']['ID']).first.id
     end
 
     save!
