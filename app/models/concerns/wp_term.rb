@@ -13,7 +13,7 @@ module WpTerm
   module ClassMethods
 
     def mappable_wordpress_attributes
-      %w( name slug description count )
+      %w( name slug description parent count )
     end
 
     def wp_type
