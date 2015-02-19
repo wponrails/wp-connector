@@ -7,13 +7,14 @@ module WpTerm
     end
 
     self.wp_id        = json['ID']
+    self.parent       = update_term('parent')
     save!
   end
 
   module ClassMethods
 
     def mappable_wordpress_attributes
-      %w( name slug description parent count )
+      %w( name slug description count )
     end
 
     def wp_type
