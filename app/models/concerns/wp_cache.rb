@@ -23,6 +23,7 @@ module WpCache
     #
     # Schedules a `create_or_update` call to itself.
     #
+    # TODO (cies): add a configurable amount of delay, defaulting to 0.5secs
     def schedule_create_or_update(wp_id)
       WpApiWorker.perform_async(self, wp_id)
     end
