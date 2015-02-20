@@ -1,6 +1,9 @@
 wp-connector
 ============
 
+[![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
+[![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
+
 This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using *something else* (in this case a Rails application) to serve public request and provide a basis for customizations.  WPEP makes use of the following WP plugins:
 
 * [**wp-relinquish**](https://github.com/hoppinger/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
