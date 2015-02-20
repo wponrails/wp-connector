@@ -79,6 +79,7 @@ module WpCache
     #
     # List of invalid api responses
     #
+    # TODO (cies): refactor to WpCache::WP_API_ERROR_CODES
     def invalid_api_responses
       %w( json_no_route json_post_invalid_type )
     end
