@@ -28,12 +28,32 @@ module WpCache
     end
 
     #
+    # Schedules a `create_or_update` call to itself.
+    #
+    def schedule_create_or_update_preview(wp_id)
+      WpApiWorker.perform_async(self, wp_id, preview: true)
+    end
+
+    #
     # Gets the content from the WP API, finds-or-creates a record for it,
     # and passes it the content by the `update_wp_cache` instance method.
     #
     def create_or_update(wp_type, wp_id)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
       wp_json = get_from_wp_api "#{ wp_type }/#{ wp_id }"
+      # WP API will return a code if the route is incorrect or
+      # the specified entry is none existant. If so return early.
+      return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
+      where(wp_id: wp_id).first_or_create.update_wp_cache(wp_json)
+    end
+
+    #
+    # Gets the content from the WP API, finds-or-creates a record for it,
+    # and passes it the content by the `update_wp_cache` instance method.
+    #
+    def create_or_update_preview(wp_type, wp_id)
+      return unless wp_id.is_a? Fixnum or wp_id.is_a? String
+      wp_json = get_from_wp_api "#{ wp_type }/preview/#{ wp_id }"
       # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
