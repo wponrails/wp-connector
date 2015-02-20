@@ -47,8 +47,7 @@ module WpCache
     # Removes records with unknown IDs.
     #
     def create_or_update_all
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ self.to_s.underscore.pluralize }"
-      wp_json = JSON.parse(response.body)
+      wp_json = get_from_wp_api self.to_s.underscore.pluralize
       ids = wp_json.map do |json|
         wp_id = json['ID']
         where(wp_id: wp_id).first_or_create.update_wp_cache(json)
@@ -71,6 +70,7 @@ module WpCache
     #
     # Convenience method for calling the WP API.
     #
+    # TODO (cies): re-raise any connection errors with more intuitive names
     def get_from_wp_api(route)
       response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
       JSON.parse(response.body)
