@@ -3,6 +3,8 @@ wp-connector
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hoppinger/wp-connector/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hoppinger/wp-connector/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/hoppinger/wp-connector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/hoppinger/wp-connector/build-status/master)
+[![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
+[![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 
 This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using *something else* (in this case a Rails application) to serve public request and provide a basis for customizations.  WPEP makes use of the following WP plugins:
 
