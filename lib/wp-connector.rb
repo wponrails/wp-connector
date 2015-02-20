@@ -1,4 +1,4 @@
-require "wp-connector/version"
+require 'wp-connector/version'
 require 'wp-connector/railtie' if defined?(Rails)
 
 module WpConnector
