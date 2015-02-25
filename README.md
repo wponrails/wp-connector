@@ -5,6 +5,7 @@ This gem is part of project called WordPress Editor Platform (WPEP), that advoca
 
 * [**wp-relinquish**](https://github.com/hoppinger/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
 * [**json-rest-api**](https://wordpress.org/plugins/json-rest-api) ([site](http://wp-api.org), [repo](https://github.com/WP-API/WP-API)) — WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
+* [**json-rest-api-menu-routes**](https://wordpress.org/plugins/wp-api-menus) ([repo](https://github.com/nekojira/wp-api-menus)) (optional) — WordPress plugin that extends the JSON REST WP API with new routes pointing to WordPress registered menus. Read the WP API documentation.
 
 With WPEP the content's *master data* resides in WP, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
 
