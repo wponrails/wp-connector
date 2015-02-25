@@ -178,6 +178,42 @@ Resulting in the following API call:
 
 `http://wordpress-site.dev/?json_route=/wp_post_type_name/{id}`
 
+### Menu items
+
+For menu items the `json-rest-api-menu-routes` WordPress plugin is required.
+
+The implementation for menus is rather straightforward.
+An example for a basic `Menu` model:
+
+```ruby
+class Menu < ActiveRecord::Base
+  include WpCache
+  include WpMenu
+
+  def update_wp_cache(json)
+    update_menu(json)
+  end
+end
+```
+
+And the migration would be:
+
+```ruby
+class CreateMenus < ActiveRecord::Migration
+  def change
+    create_table :menus do |t|
+      t.integer :wp_id
+      t.string  :slug
+      t.text    :description
+      t.string  :slug
+      t.integer :count
+      t.text    :items
+      t.timestamps
+    end
+  end
+end
+```
+
 
 ## Contributing
 
