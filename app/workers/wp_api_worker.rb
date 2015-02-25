@@ -9,7 +9,7 @@ class WpApiWorker
   include Sidekiq::Worker
   sidekiq_options :retry => false
 
-  def perform(klass, wp_id, options = {preview: false})
+  def perform(klass, wp_id, options = { preview: false })
     # previews have a different endpoint in the json api
     if options['preview']
       klass.constantize.create_or_update_preview(klass.constantize.wp_type, wp_id)
