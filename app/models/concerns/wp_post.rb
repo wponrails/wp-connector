@@ -5,6 +5,7 @@ module WpPost
     serialize :acf_fields
   end
 
+  # TODO (cies): rename to update_wp_post_attributes
   def update_post(json)
     self.class.mappable_wordpress_attributes.each do |wp_attribute|
       send("#{wp_attribute}=", json[wp_attribute])
@@ -17,6 +18,7 @@ module WpPost
   end
 
   module ClassMethods
+    # TODO (cies): refactor to constant WpPost::MAPPABLE_ATTRS
     def mappable_wordpress_attributes
       %w( slug title status content excerpt acf_fields )
     end
