@@ -49,7 +49,7 @@ module WpCache
     # Removes records with unknown IDs.
     #
     def create_or_update_all
-      wp_json = get_from_wp_api self.to_s.underscore.pluralize
+      wp_json = get_from_wp_api wp_type
       ids = wp_json.map do |json|
         wp_id = json['ID']
         where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
