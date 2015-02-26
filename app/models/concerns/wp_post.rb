@@ -22,7 +22,7 @@ module WpPost
     # Exclude 'draft' or 'pending' statusses.
     #
     def default_scope
-      where status: 'publish'
+      where status: "publish"
     end
 
     def mappable_wordpress_attributes
