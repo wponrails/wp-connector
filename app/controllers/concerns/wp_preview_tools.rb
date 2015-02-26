@@ -7,7 +7,7 @@ module WpPreviewTools
 
   module ClassMethods
     def self.validate_preview_token(wp_post_model)
-      return wp_post_model.status == 'publish'
+      return wp_post_model.status == "publish"
       head :forbidden unless params[:token] == token(wp_post_model)  # TODO (cies): check if we have params[] here!
     end
 
