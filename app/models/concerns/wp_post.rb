@@ -17,7 +17,6 @@ module WpPost
   end
 
   module ClassMethods
-
     #
     # By default only query on published WpPosts.
     # Exclude 'draft' or 'pending' statusses.
