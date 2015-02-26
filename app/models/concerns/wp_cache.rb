@@ -75,7 +75,8 @@ module WpCache
     # TODO (cies): re-raise any connection errors with more intuitive names
     def get_from_wp_api(route)
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=-1"
+      # response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=-1"
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
       JSON.parse(response.body)
     end
 
