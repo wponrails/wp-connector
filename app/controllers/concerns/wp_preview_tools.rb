@@ -12,8 +12,8 @@ module WpPreviewTools
     end
 
     def self.token(wp_post_model)
-      hash_inputs = Rails.configuration.x.wp_connector_secret + wp_post_model.slug
-      Digest::SHA2.new(256).hexdigest hash_inputs
+      hash = Rails.configuration.x.wp_connector_secret + wp_post_model.slug
+      Digest::SHA2.new(256).hexdigest hash
     end
   end
 end
