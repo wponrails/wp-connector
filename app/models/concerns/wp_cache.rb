@@ -23,7 +23,7 @@ module WpCache
     #
     # Schedules a `create_or_update` call to itself.
     #
-    def schedule_create_or_update(wp_id, preview=false)
+    def schedule_create_or_update(wp_id, preview = false)
       WpApiWorker.perform_async(self, wp_id, preview)
     end
 
@@ -31,7 +31,7 @@ module WpCache
     # Gets the content from the WP API, finds-or-creates a record for it,
     # and passes it the content by the `update_wp_cache` instance method.
     #
-    def create_or_update(wp_type, wp_id, preview=false)
+    def create_or_update(wp_type, wp_id, preview = false)
       return unless wp_id.is_a? Fixnum or wp_id.is_a? String
       maybe_preview_segment = (preview ? "preview/" : "")
       wp_json = get_from_wp_api "#{ wp_type }/#{ maybe_preview_segment }#{ wp_id }"
