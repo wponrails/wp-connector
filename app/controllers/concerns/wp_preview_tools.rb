@@ -26,7 +26,7 @@ module WpPreviewTools
   # Retries loading of a WpCache model, if it was not found the first time.
   # This to avoid NotFound errors due to the delaying of WP API calls.
   #
-  def retry_when_preview(retrying=false, &block)
+  def retry_when_preview(retrying = false, &block)
     raise "retry_when_preview requires a block" unless block_given?
     return block.call
   rescue ActiveRecord::ActiveRecordError => e
