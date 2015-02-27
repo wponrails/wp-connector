@@ -28,7 +28,6 @@ module WpWebhookEndpoint
     to_bool params[:preview]
   end
 
-
   #
   # Convenience method for rendering the most common JSON responses.
   #
