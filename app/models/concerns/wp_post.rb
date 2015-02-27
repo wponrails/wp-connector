@@ -17,14 +17,6 @@ module WpPost
   end
 
   module ClassMethods
-    #
-    # By default only query on published WpPosts.
-    # Exclude 'draft' or 'pending' statusses.
-    #
-    def default_scope
-      where status: "publish"
-    end
-
     def mappable_wordpress_attributes
       %w( slug title status content excerpt acf_fields )
     end
