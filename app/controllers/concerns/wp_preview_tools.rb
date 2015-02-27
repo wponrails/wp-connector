@@ -10,8 +10,8 @@ module WpPreviewTools
   # for instance the statuses `draft` and `pending`.
   #
   def validate_preview_token(wp_post_model)
-    return wp_post_model.status == "publish"
-    head :forbidden unless params[:token] == token(wp_post_model)
+    return if wp_post_model.status == "publish"
+    head :unauthorized unless params[:token] == token(wp_post_model)
   end
 
   #
