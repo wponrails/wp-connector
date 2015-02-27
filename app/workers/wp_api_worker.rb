@@ -7,7 +7,7 @@ require 'sidekiq'
 #
 class WpApiWorker
   include Sidekiq::Worker
-  sidekiq_options :retry => false
+  sidekiq_options retry: false
 
   def perform(klass, wp_id, preview = false)
     cklass = klass.constantize

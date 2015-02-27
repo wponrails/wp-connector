@@ -23,6 +23,7 @@ module WpCache
     #
     # Schedules a `create_or_update` call to itself.
     #
+    # TODO (cies): add a configurable amount of delay, defaulting to 0.5secs
     def schedule_create_or_update(wp_id, preview = false)
       WpApiWorker.perform_async(self, wp_id, preview)
     end
@@ -48,8 +49,7 @@ module WpCache
     # Removes records with unknown IDs.
     #
     def create_or_update_all
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ self.to_s.underscore.pluralize }"
-      wp_json = JSON.parse(response.body)
+      wp_json = get_from_wp_api self.to_s.underscore.pluralize
       ids = wp_json.map do |json|
         wp_id = json['ID']
         where(wp_id: wp_id).first_or_create.update_wp_cache(json)
@@ -72,6 +72,7 @@ module WpCache
     #
     # Convenience method for calling the WP API.
     #
+    # TODO (cies): re-raise any connection errors with more intuitive names
     def get_from_wp_api(route)
       response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
       JSON.parse(response.body)
@@ -80,6 +81,7 @@ module WpCache
     #
     # List of invalid api responses
     #
+    # TODO (cies): refactor to WpCache::WP_API_ERROR_CODES
     def invalid_api_responses
       %w( json_no_route json_post_invalid_type )
     end
