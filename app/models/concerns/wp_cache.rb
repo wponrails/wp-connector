@@ -38,7 +38,7 @@ module WpCache
       # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
-      where(wp_id: wp_id).first_or_create.update_wp_cache(wp_json)
+      where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
     end
 
     #
@@ -51,7 +51,7 @@ module WpCache
       wp_json = get_from_wp_api self.to_s.underscore.pluralize
       ids = wp_json.map do |json|
         wp_id = json['ID']
-        where(wp_id: wp_id).first_or_create.update_wp_cache(json)
+        where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
         wp_id
       end
       where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
