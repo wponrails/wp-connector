@@ -1,6 +1,9 @@
 wp-connector
 ============
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hoppinger/wp-connector/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hoppinger/wp-connector/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/hoppinger/wp-connector/badges/build.png?b=master)](https://scrutinizer-ci.com/g/hoppinger/wp-connector/build-status/master)
+
 This gem is part of project called WordPress Editor Platform (WPEP), that advocates using WP as a means to create and edit content while using *something else* (in this case a Rails application) to serve public request and provide a basis for customizations.  WPEP makes use of the following WP plugins:
 
 * [**wp-relinquish**](https://github.com/hoppinger/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
