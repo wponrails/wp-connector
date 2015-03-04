@@ -9,7 +9,8 @@ class WpApiWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
 
-  def perform(klass, wp_id)
-    klass.constantize.create_or_update(klass.constantize.wp_type, wp_id)
+  def perform(klass, wp_id, preview = false)
+    cklass = klass.constantize
+    cklass.create_or_update(cklass.wp_type, wp_id, preview)
   end
 end

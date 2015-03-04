@@ -19,7 +19,15 @@ module WpWebhookEndpoint
     # the actual ID used by WP in case multiple versions exist.
     params[:parent_ID] || params[:ID]
   end
-  
+
+  #
+  # Convenience method for finding the `preview` of an incoming POST request.
+  #
+  def preview_from_params
+    # some systems send in a string '1' or '0' for booleans. Map it to boolean:
+    to_bool params[:preview]
+  end
+
   #
   # Convenience method for rendering the most common JSON responses.
   #
@@ -33,5 +41,14 @@ module WpWebhookEndpoint
 
   def require_valid_api_key
     head :unauthorized unless params[:api_key] == Rails.configuration.x.wp_connector_api_key
+  end
+
+  #
+  # helper method to check if a posted string param is a boolean
+  #
+  def to_bool(string)
+    return true if string == true || string =~ (/^(true|t|yes|y|1)$/i)
+    return false if string == false || string.blank? || string =~ (/^(false|f|no|n|0)$/i)
+    raise ArgumentError.new("invalid value for Boolean: \"#{string}\"")
   end
 end
