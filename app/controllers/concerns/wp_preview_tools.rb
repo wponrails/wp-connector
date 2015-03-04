@@ -12,6 +12,9 @@ module WpPreviewTools
   def validate_preview_token(wp_post_model)
     return if wp_post_model.status == "publish"
     head :unauthorized unless params[:token] == token(wp_post_model)
+
+    # return true for clearer debugging
+    return true
   end
 
   #
