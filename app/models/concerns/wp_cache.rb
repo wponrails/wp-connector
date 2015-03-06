@@ -51,7 +51,8 @@ module WpCache
     # TODO (dunyakirkali) clean up
     def create_or_update_all
       page = 0
-      while paginated_models.include?(wp_type) do
+      max_page = (ENV['MAX_PAGE'].to_i == 0 ? 999 : ENV['MAX_PAGE'].to_i)
+      while paginated_models.include?(wp_type) && (page < max_page) do
         puts " page #{page}"
         wp_json = get_from_wp_api(wp_type, page)
         break if wp_json.empty?
@@ -82,7 +83,8 @@ module WpCache
     # TODO (cies): re-raise any connection errors with more intuitive names
     def get_from_wp_api(route, page = 0)
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=10&page=#{page}"
+      posts_per_page = (ENV['PER_PAGE'].to_i == 0 ? 10 : ENV['PER_PAGE'].to_i)
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       JSON.parse(response.body)
     end
 
