@@ -72,7 +72,7 @@ module WpCache
         end
         page = page + 1
       end
-      where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+      where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
     end
 
     # TODO (dunyakirkali) doc
