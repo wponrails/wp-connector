@@ -110,7 +110,7 @@ module WpCache
 
     # List of paginated models
     def paginated_models
-      %w(item_articles news_articles pages)
+      %w(item_articles news_articles)
     end
 
     #
