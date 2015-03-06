@@ -48,14 +48,21 @@ module WpCache
     # the `update_wp_cache` instance method.
     # Removes records with unknown IDs.
     #
+    # TODO (dunyakirkali) clean up
     def create_or_update_all
-      wp_json = get_from_wp_api wp_type
-      ids = wp_json.map do |json|
-        wp_id = json['ID']
-        where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
-        wp_id
+      page = 0
+      while paginated_models.include?(wp_type) do
+        puts " page #{page}"
+        wp_json = get_from_wp_api(wp_type, page)
+        break if wp_json.empty?
+        ids = wp_json.map do |json|
+          wp_id = json['ID']
+          where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
+          wp_id
+        end
+        where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+        page = page + 1
       end
-      where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
     end
 
     #
@@ -73,11 +80,15 @@ module WpCache
     # Convenience method for calling the WP API.
     #
     # TODO (cies): re-raise any connection errors with more intuitive names
-    def get_from_wp_api(route)
+    def get_from_wp_api(route, page = 0)
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=-1"
-      # response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
+      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=10&page=#{page}"
       JSON.parse(response.body)
+    end
+
+    # List of paginated models
+    def paginated_models
+      %w(item_articles news_articles page)
     end
 
     #
