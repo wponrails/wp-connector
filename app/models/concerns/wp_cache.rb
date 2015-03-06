@@ -104,11 +104,12 @@ module WpCache
     def get_from_wp_api(route, page = -1)
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
       posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
-      if posts_per_page == -1
-        response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=#{posts_per_page}"
+      unless paginated_models.include?(wp_type)
+        url = "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=-1"
       else
-        response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
+        url = "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       end
+      response = Faraday.get url
       JSON.parse(response.body)
     end
 
