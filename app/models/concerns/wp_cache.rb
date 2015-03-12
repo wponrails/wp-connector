@@ -42,14 +42,42 @@ module WpCache
       where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
     end
 
+    def create_or_update_all
+      if paginated_models.include?(wp_type)
+        create_or_update_all_paginated
+      else
+        create_or_update_all_non_paginated
+      end
+    end
+
     #
     # Gets all WP IDs for a class of WP content form the WP API,
     # finds-or-creates a record for it, and passes it the content by
     # the `update_wp_cache` instance method.
     # Removes records with unknown IDs.
     #
-    def create_or_update_all
-      wp_json = get_from_wp_api self.to_s.underscore.pluralize
+    # TODO (dunyakirkali) clean up
+    def create_or_update_all_paginated
+      page = 0
+      ids = []
+      max_page = (ENV['MAX_PAGE'].to_i == 0 ? 999 : ENV['MAX_PAGE'].to_i)
+      while page < max_page do
+        puts " page #{page}"
+        wp_json = get_from_wp_api(wp_type, page)
+        break if wp_json.empty?
+        ids << wp_json.map do |json|
+          wp_id = json['ID']
+          where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
+          wp_id
+        end
+        page = page + 1
+      end
+      where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
+    end
+
+    # TODO (dunyakirkali) doc
+    def create_or_update_all_non_paginated
+      wp_json = get_from_wp_api(wp_type)
       ids = wp_json.map do |json|
         wp_id = json['ID']
         where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
@@ -73,9 +101,21 @@ module WpCache
     # Convenience method for calling the WP API.
     #
     # TODO (cies): re-raise any connection errors with more intuitive names
-    def get_from_wp_api(route)
-      response = Faraday.get "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }"
+    def get_from_wp_api(route, page = -1)
+      # TODO (dunyakirkali) pass filter through args to get_from_wp_api
+      posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
+      unless paginated_models.include?(wp_type)
+        url = "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=-1"
+      else
+        url = "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
+      end
+      response = Faraday.get url
       JSON.parse(response.body)
+    end
+
+    # List of paginated models
+    def paginated_models
+      %w(item_articles news_articles)
     end
 
     #
