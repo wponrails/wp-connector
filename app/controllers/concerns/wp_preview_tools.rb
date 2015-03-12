@@ -9,9 +9,14 @@ module WpPreviewTools
   # Validates preview tokens for wp_post_models that are not published.
   # for instance the statuses `draft` and `pending`.
   #
-  def validate_preview_token(wp_post_model)
+  def validate_preview_token(wp_post_model, &block)
     return if wp_post_model.status == "publish"
-    head :unauthorized unless params[:token] == token(wp_post_model)
+
+    unless params[:token] == token(wp_post_model)
+      head :unauthorized and return unless block_given?
+
+      block.call
+    end
 
     # return true for clearer debugging
     return true
