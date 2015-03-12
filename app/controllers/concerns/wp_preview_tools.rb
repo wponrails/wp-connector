@@ -13,9 +13,9 @@ module WpPreviewTools
     return if wp_post_model.status == "publish"
 
     unless params[:token] == token(wp_post_model)
-      head :unauthorized unless params[:token] == token(wp_post_model) unless block_given?
+      head :unauthorized and return unless params[:token] == token(wp_post_model) unless block_given?
 
-      return block.call
+      block.call
     end
 
     # return true for clearer debugging
