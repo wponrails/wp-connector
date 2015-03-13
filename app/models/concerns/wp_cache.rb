@@ -123,7 +123,7 @@ module WpCache
     #
     # TODO (cies): refactor to WpCache::WP_API_ERROR_CODES
     def invalid_api_responses
-      %w( json_no_route json_post_invalid_type )
+      %w( json_no_route json_post_invalid_type json_user_cannot_read )
     end
   end
 end
