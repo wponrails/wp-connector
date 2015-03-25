@@ -107,7 +107,7 @@ class Post < ActiveRecord::Base
 end
 ```
 
-And the examplefor the `Author` model:
+And an example of an `Author` model:
 
 ```ruby
 class Author < ActiveRecord::Base
@@ -172,11 +172,13 @@ Therefore the wp_type of a rails model can be overridden with the `wp_type` clas
 
 ```ruby
 class Author < ActiveRecord::Base
-  #Code excluded for brevity
+  # ... snip ...
 
   def self.wp_type
     'wp_post_type_name'
   end
+
+  # ... snap ...
 end
 ```
 
