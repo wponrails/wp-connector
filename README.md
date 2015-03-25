@@ -52,9 +52,14 @@ In WordPress install both the `wp-relinquish` and `json-rest-api` plugin. The wo
 
 Add the "JSON route" of the WP REST API to your Rails configuration by adding the `wordpress_url` config option to your environment files in `config/environments/` (e.g. `config/environments/development.rb`):
 ```ruby
-Rails.configuration.x.wordpress_url="http://wordpress-site.dev/"
+Rails.configuration.x.wordpress_url = "http://wordpress-site.dev/"
 ```
 Here `wordpress-site.dev` is the domain for your Wordpress site.
+
+This configures some models, `['articles', 'news_articles', 'pages']`, for paginated requests to the WP-REST API.
+```ruby
+Rails.configuration.x.wp_api_paginated_models = %w(articles news_articles pages)
+```
 
 Also specify the wp-connector API key in the Rails configuration by adding the `wp_connector_api_key` config option to the same environment files in `config/environments/` (e.g. `config/environments/development.rb`):
 ```ruby

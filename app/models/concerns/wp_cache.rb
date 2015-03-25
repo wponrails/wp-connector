@@ -117,9 +117,13 @@ module WpCache
     #
     # List of paginated models
     #
-    # TODO (cies): This should not be here. Move it to Rails.configuration.x.wp_api_paginated_models?
     def paginated_models
-      %w(articles news_articles pages)
+      models = Rails.configuration.x.wp_api_paginated_models
+      unless models
+        Rails.logger.warn "Please specifiy Rails.configuration.x.wp_api_paginated_models, as the default is DEPRICATED"
+        models %w(articles news_articles pages)
+      end
+      models
     end
 
     #
