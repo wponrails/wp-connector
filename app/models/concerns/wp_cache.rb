@@ -110,6 +110,7 @@ module WpCache
       else
         url = "#{base}?json_route=/#{route}&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       end
+      Rails.logger.info url
       response = Faraday.get url
       JSON.parse(response.body)
     end
