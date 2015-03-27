@@ -25,6 +25,7 @@ module WpCache
     #
     # TODO (cies): add a configurable amount of delay, defaulting to 0.5secs
     def schedule_create_or_update(wp_id, preview = false)
+      Rails.logger.info "SCHEDULED by #{self.class} after #{request.fullpath} -- #{request.body.read}"
       WpApiWorker.perform_async(self, wp_id, preview)
     end
 
