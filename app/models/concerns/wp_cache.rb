@@ -110,8 +110,10 @@ module WpCache
       else
         url = "#{base}?json_route=/#{route}&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       end
-      Rails.logger.warn url
       response = Faraday.get url
+      unless response.success?
+        fail Exceptions::WpApiResponseError, "WP-API #{url} responded #{response.status} #{response.body}"
+      end
       JSON.parse(response.body)
     end
 
