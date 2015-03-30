@@ -113,7 +113,9 @@ module WpCache
         url = "#{base}?json_route=/#{route}&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       end
       response = Faraday.get url
-      unless response.success?
+
+      # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
+      unless response.success? || (response.status >= 500 && response.status <= 599)
         fail Exceptions::WpApiResponseError, "WP-API #{url} responded #{response.status} #{response.body}"
       end
       JSON.parse(response.body)
