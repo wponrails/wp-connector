@@ -128,7 +128,7 @@ module WpCache
       models = Rails.configuration.x.wp_api_paginated_models
       if models.empty?
         Rails.logger.warn "Please specifiy Rails.configuration.x.wp_api_paginated_models, as the default is DEPRICATED"
-        models = %w( articles news_articles pages )
+        models = %w( articles news_articles pages media)
       end
       models
     end
