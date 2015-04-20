@@ -24,7 +24,9 @@ module WpCache
     # Schedules a `create_or_update` call to itself.
     #
     # TODO (cies): add a configurable amount of delay, defaulting to 0.5secs
-    def schedule_create_or_update(wp_id, preview = false)
+    def schedule_create_or_update(wp_id, preview = false, request = nil)
+      extra_info = request ? " after #{request.fullpath} -- #{request.body.read}" : ""
+      Rails.logger.info("SCHEDULED by #{self.class}" + extra_info)
       WpApiWorker.perform_async(self, wp_id, preview)
     end
 
@@ -104,19 +106,32 @@ module WpCache
     def get_from_wp_api(route, page = -1)
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
       posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
+      base = Rails.configuration.x.wordpress_url
       unless paginated_models.include?(wp_type)
-        url = "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=-1"
+        url = "#{base}?json_route=/#{route}&filter[posts_per_page]=-1"
       else
-        url = "#{ Rails.configuration.x.wordpress_url }?json_route=/#{ route }&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
+        url = "#{base}?json_route=/#{route}&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       end
       Rails.logger.info url
       response = Faraday.get url
+
+      # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
+      unless response.success? || (response.status >= 500 && response.status <= 599)
+        fail Exceptions::WpApiResponseError, "WP-API #{url} responded #{response.status} #{response.body}"
+      end
       JSON.parse(response.body)
     end
 
+    #
     # List of paginated models
+    #
     def paginated_models
-      %w(item_articles news_articles)
+      models = Rails.configuration.x.wp_api_paginated_models
+      if models.empty?
+        Rails.logger.warn "Please specifiy Rails.configuration.x.wp_api_paginated_models, as the default is DEPRICATED"
+        models = %w( articles news_articles pages media)
+      end
+      models
     end
 
     #

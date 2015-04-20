@@ -12,7 +12,8 @@ module WpPost
     end
 
     self.wp_id        = json['ID']
-    self.published_at = json['date']
+    # Use gmt date to ignore timezone settings in WordPress
+    self.published_at = json['date_gmt']
     self.order        = json['menu_order']
     save!
   end

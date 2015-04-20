@@ -2,6 +2,8 @@ module WpTerm
   extend ActiveSupport::Concern
 
   def update_term(json)
+    return unless json.is_a?(Hash)
+
     self.class.mappable_wordpress_attributes.each do |wp_attribute|
       send("#{wp_attribute}=", json[wp_attribute])
     end
