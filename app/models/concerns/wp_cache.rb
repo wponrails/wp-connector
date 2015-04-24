@@ -113,6 +113,7 @@ module WpCache
         url = "#{base}?json_route=/#{route}&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
       end
       Rails.logger.info url
+      puts url
       response = Faraday.get url
 
       # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
