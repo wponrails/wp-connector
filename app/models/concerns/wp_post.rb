@@ -25,7 +25,7 @@ module WpPost
     end
 
     def wp_type
-      self.to_s.underscore.pluralize
+      self.to_s.demodulize.underscore.pluralize
     end
   end
 end
