@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
                         "jeroenrietveld@AThoppinger.com", "dunya@AThoppinger.com",
                         "cies@AThoppinger.com"]
   spec.summary       = %q{Use Rails on top of WP: Manage content from WP; customize, extend, optimize and serve the visitors from Rails.}
-  spec.homepage      = "https://github.com/hoppinger/wp-connector"
+  spec.homepage      = "https://github.com/wponrails/wp-connector"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

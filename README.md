@@ -8,7 +8,7 @@ wp-connector
 
 This library is part of the [WPonRails](https://github.com/wponrails) project, that advocates using WP as a means to create and edit content while using *something else* (in this case a Rails application) to serve public request and provide a basis for customizations.  WPonRails also provides the following WP plugins that work well with this library:
 
-* [**wp-relinquish**](https://github.com/hoppinger/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
+* [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
 * [**json-rest-api**](https://wordpress.org/plugins/json-rest-api) ([site](http://wp-api.org), [repo](https://github.com/WP-API/WP-API)) — WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
 * [**json-rest-api-menu-routes**](https://wordpress.org/plugins/wp-api-menus) ([repo](https://github.com/nekojira/wp-api-menus)) (optional) — WordPress plugin that extends the JSON REST WP API with new routes pointing to WordPress registered menus. Read the WP API documentation.
 
@@ -38,7 +38,7 @@ The delayed job fetches the relevant content from WP using the [WP-REST-API](htt
 Add this line to your Rails application's `Gemfile`:
 
 ```ruby
-gem 'wp-connector', :github => 'hoppinger/wp-connector'
+gem 'wp-connector', :github => 'wponrails/wp-connector'
 ```
 
 Then execute `bundle install`.
@@ -242,4 +242,4 @@ You know the drill :)
 
 Copyright (c) 2014-2015, Hoppinger B.V.
 
-All files in this repository are MIT-licensed, as specified in the [LICENSE file](https://github.com/hoppinger/wp-connector/blob/features/master/LICENSE).
+All files in this repository are MIT-licensed, as specified in the [LICENSE file](https://github.com/wponrails/wp-connector/blob/features/master/LICENSE).
