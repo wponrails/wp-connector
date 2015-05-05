@@ -64,7 +64,7 @@ module WpCache
       ids = []
       max_page = (ENV['MAX_PAGE'].to_i == 0 ? 999 : ENV['MAX_PAGE'].to_i)
       while page < max_page do
-        puts " page #{page}"
+        Rails.logger.info " page #{page}"
         wp_json = get_from_wp_api(wp_type, page)
         break if wp_json.empty?
         ids << wp_json.map do |json|
@@ -114,7 +114,6 @@ module WpCache
       end
       Rails.logger.info url
       response = Faraday.get url
-
       # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
       unless response.success? || (response.status >= 500 && response.status <= 599)
         fail Exceptions::WpApiResponseError, "WP-API #{url} responded #{response.status} #{response.body}"
