@@ -6,7 +6,7 @@ wp-connector
 [![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 [![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 
-This library is part of the [''WP on Rails''](https://github.com/wponrails) project, that limits WP to a means of managing content while using a Rails application to serve public request and provide a basis for customizations.  
+This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that limits WP to a means of managing content while using a Rails application to serve public request and provide a basis for customizations.  
 
 To prepare a WP installation to be used in a **WP on Rails** architecture the [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) plugin is provided. It provides a means to configure WP actions to send notifications as webhook calls to a Rails application equipped with **wp-connector**.
 
