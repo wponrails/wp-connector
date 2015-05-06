@@ -6,13 +6,11 @@ wp-connector
 [![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 [![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 
-This library is part of the [WPonRails](https://github.com/wponrails) project, that advocates using WP as a means to create and edit content while using *something else* (in this case a Rails application) to serve public request and provide a basis for customizations.  WPonRails also provides the following WP plugins that work well with this library:
+This library is part of the [''WP on Rails''](https://github.com/wponrails) project, that limits WP to a means of managing content while using a Rails application to serve public request and provide a basis for customizations.  
 
-* [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) — WP plugin which provides a means to configure WP actions to trigger HTTP requests (webhooks), and a means to reuse WP's admin bar.
-* [**json-rest-api**](https://wordpress.org/plugins/json-rest-api) ([site](http://wp-api.org), [repo](https://github.com/WP-API/WP-API)) — WP plugin that adds a modern RESTful web-API to a WordPress site. This module is scheduled to be shipped as part of WordPress 4.1.
-* [**json-rest-api-menu-routes**](https://wordpress.org/plugins/wp-api-menus) ([repo](https://github.com/nekojira/wp-api-menus)) (optional) — WordPress plugin that extends the JSON REST WP API with new routes pointing to WordPress registered menus. Read the WP API documentation.
+To prepare a WP installation to be used in a **WP on Rails** architecture the [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) plugin is provided. It provides a means to configure WP actions to send notifications as webhook calls to a Rails application equipped with **wp-connector**.
 
-When using WPonRails the content's *master data* resides in WP's database, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
+When using **WP on Rails** the content's *master data* resides in WP's database, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
 
 The main reasons for not using WP to serve public web requests:
 
