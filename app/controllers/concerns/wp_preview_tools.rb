@@ -13,13 +13,13 @@ module WpPreviewTools
     return if wp_post_model.status == "publish"
 
     unless params[:token] == token(wp_post_model)
-      head :unauthorized and return unless block_given?
+      head :unauthorized && return unless block_given?
 
       block.call
     end
 
     # return true for clearer debugging
-    return true
+    true
   end
 
   #
@@ -35,7 +35,7 @@ module WpPreviewTools
   # This to avoid NotFound errors due to the delaying of WP API calls.
   #
   def retry_when_preview(retrying = false, &block)
-    raise "retry_when_preview requires a block" unless block_given?
+    fail "retry_when_preview requires a block" unless block_given?
     return block.call
   rescue ActiveRecord::ActiveRecordError => e
     raise e if !params[:preview] || retrying

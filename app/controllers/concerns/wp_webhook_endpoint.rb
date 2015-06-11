@@ -24,7 +24,7 @@ module WpWebhookEndpoint
   # Convenience method for finding the `preview` of an incoming POST request.
   #
   def preview_from_params
-    # some systems send in a string '1' or '0' for booleans. Map it to boolean:
+    # some systems send in a string "1" or "0" for booleans. Map it to boolean:
     to_bool params[:preview]
   end
 
@@ -33,9 +33,9 @@ module WpWebhookEndpoint
   #
   def render_json_200_or_404(success)
     if success
-      render json: {status: 200, message: 'OK'}
+      render json: { status: 200, message: "OK" }
     else
-      render json: {status: 404, message: 'Not found'}
+      render json: { status: 404, message: "Not found" }
     end
   end
 
@@ -49,6 +49,6 @@ module WpWebhookEndpoint
   def to_bool(string)
     return true if string == true || string =~ (/^(true|t|yes|y|1)$/i)
     return false if string == false || string.blank? || string =~ (/^(false|f|no|n|0)$/i)
-    raise ArgumentError.new("invalid value for Boolean: \"#{string}\"")
+    fail(ArgumentError, "invalid value for Boolean: \"#{string}\"")
   end
 end
