@@ -14,7 +14,7 @@ module WpRedirect
   # implements class methods
   module ClassMethods
     def mappable_wordpress_attributes
-      %w( name slug description count )
+      %w( id from to )
     end
 
     def wp_type
