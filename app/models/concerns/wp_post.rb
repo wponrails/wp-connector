@@ -15,13 +15,21 @@ module WpPost
     # Use gmt date to ignore timezone settings in WordPress
     self.published_at = json['date_gmt']
     self.order        = json['menu_order']
+
+    # active record serialize explodes if the array is empty.
+    if json['acf_fields'].blank?
+      self.acf_fields = nil
+    else
+      self.acf_fields = json['acf_fields']
+    end
+
     save!
   end
 
   module ClassMethods
     # TODO (cies): refactor to constant WpPost::MAPPABLE_ATTRS
     def mappable_wordpress_attributes
-      %w( slug title status content excerpt acf_fields )
+      %w( slug title status content excerpt )
     end
 
     def wp_type
