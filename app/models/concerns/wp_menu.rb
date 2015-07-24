@@ -14,7 +14,7 @@ module WpMenu
 
   module ClassMethods
     def wp_type
-      'menus'
+      "menus"
     end
   end
 end

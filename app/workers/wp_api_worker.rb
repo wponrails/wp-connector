@@ -1,4 +1,4 @@
-require 'sidekiq'
+require "sidekiq"
 
 #
 # This worker is used to schedule a `create_or_update` class method call
@@ -12,6 +12,6 @@ class WpApiWorker
     cklass = klass.constantize
     cklass.create_or_update(cklass.wp_type, wp_id, preview)
   rescue Exceptions::WpApiResponseError => e
-    Rails.logger.warn ("[FAILED JOB] " + e.message)
+    Rails.logger.warn("[FAILED JOB] #{e.message}")
   end
 end
