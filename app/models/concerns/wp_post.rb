@@ -15,6 +15,10 @@ module WpPost
     # Use gmt date to ignore timezone settings in WordPress
     self.published_at = json['date_gmt']
     self.order        = json['menu_order']
+  end
+
+  def update_post!(json)
+    update_post(json)
     save!
   end
 
