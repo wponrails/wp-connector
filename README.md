@@ -46,20 +46,24 @@ Then execute `bundle install`.
 
 In WordPress install both the `wp-relinquish` and `json-rest-api` plugin. The wonderful ACF plugin should work out-of-the-box with `wp-relinquish`.  The `wp-relinquish` plugin needs some configuration, as specified in the README of that project.
 
-Add the "JSON route" of the WP REST API to your Rails configuration by adding the `wordpress_url` config option to your environment files in `config/environments/` (e.g. `config/environments/development.rb`):
+Create an initializer and specify the "JSON route" of the WP REST API, by setting the `wordpress_url` config option:
 ```ruby
-WpConnector.configuration.wordpress_url = "http://wordpress-site.dev/"
+# config/initializers/wp_connector.rb
+
+WpConnector.configure do |config|
+  config.wordpress_url = "http://wordpress-site.dev/"
+end
 ```
 Here `wordpress-site.dev` is the domain for your Wordpress site.
 
-This configures some models, `['articles', 'news_articles', 'pages']`, for paginated requests to the WP-REST API.
+In order to configure models, `['articles', 'news_articles', 'pages']`, for paginated requests to the WP-REST API, add the following to your initializer:
 ```ruby
-WpConnector.configuration.wp_api_paginated_models = %w(articles news_articles pages)
+config.wp_api_paginated_models = %w(articles news_articles pages)
 ```
 
-Also specify the wp-connector API key in the Rails configuration by adding the `wp_connector_api_key` config option to the same environment files in `config/environments/` (e.g. `config/environments/development.rb`):
+Also specify the wp-connector API key in the wp-connector configuration by adding the `wp_connector_api_key` config option to the initializer:
 ```ruby
-WpConnector.configuration.wp_connector_api_key="H3O5P6P1I5N8G8E4R"
+config.wp_connector_api_key="H3O5P6P1I5N8G8E4R"
 ```
 
 
