@@ -17,7 +17,7 @@ module WpWebhookEndpoint
   def wp_id_from_params
     # The `parent_ID` has precedence over `ID` as the former contains
     # the actual ID used by WP in case multiple versions exist.
-    params[:parent_ID] || params[:ID]
+    params[:parent_ID] || params[:ID] || params[:id]
   end
 
   #
@@ -40,7 +40,7 @@ module WpWebhookEndpoint
   end
 
   def require_valid_api_key
-    head :unauthorized unless params[:api_key] == Rails.configuration.x.wp_connector_api_key
+    head :unauthorized unless params[:api_key] == WpConnector.configuration.wp_connector_api_key
   end
 
   #

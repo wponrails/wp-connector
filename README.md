@@ -6,7 +6,7 @@ wp-connector
 [![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 [![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 
-This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that limits WP to a means of managing content while using a Rails application to serve public request and provide a basis for customizations.  
+This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that limits WP to a means of managing content while using a Rails application to serve public request and provide a basis for customizations.
 
 To prepare a WP installation to be used in a **WP on Rails** architecture the [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) plugin is provided. It provides a means to configure WP actions to send notifications as webhook calls to a Rails application equipped with **wp-connector**.
 
@@ -48,18 +48,18 @@ In WordPress install both the `wp-relinquish` and `json-rest-api` plugin. The wo
 
 Add the "JSON route" of the WP REST API to your Rails configuration by adding the `wordpress_url` config option to your environment files in `config/environments/` (e.g. `config/environments/development.rb`):
 ```ruby
-Rails.configuration.x.wordpress_url = "http://wordpress-site.dev/"
+WpConnector.configuration.wordpress_url = "http://wordpress-site.dev/"
 ```
 Here `wordpress-site.dev` is the domain for your Wordpress site.
 
 This configures some models, `['articles', 'news_articles', 'pages']`, for paginated requests to the WP-REST API.
 ```ruby
-Rails.configuration.x.wp_api_paginated_models = %w(articles news_articles pages)
+WpConnector.configuration.wp_api_paginated_models = %w(articles news_articles pages)
 ```
 
 Also specify the wp-connector API key in the Rails configuration by adding the `wp_connector_api_key` config option to the same environment files in `config/environments/` (e.g. `config/environments/development.rb`):
 ```ruby
-Rails.configuration.x.wp_connector_api_key="H3O5P6P1I5N8G8E4R"
+WpConnector.configuration.wp_connector_api_key="H3O5P6P1I5N8G8E4R"
 ```
 
 

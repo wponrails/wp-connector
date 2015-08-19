@@ -106,7 +106,7 @@ module WpCache
     def get_from_wp_api(route, page = -1)
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
       posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
-      base = Rails.configuration.x.wordpress_url
+      base = WpConnector.configuration.wordpress_url
       unless paginated_models.include?(wp_type)
         url = "#{base}?json_route=/#{route}&filter[posts_per_page]=-1"
       else
@@ -125,9 +125,9 @@ module WpCache
     # List of paginated models
     #
     def paginated_models
-      models = Rails.configuration.x.wp_api_paginated_models
+      models = WpConnector.configuration.wp_api_paginated_models
       if models.empty?
-        Rails.logger.warn "Please specifiy Rails.configuration.x.wp_api_paginated_models, as the default is DEPRICATED"
+        Rails.logger.warn "Please specifiy WpConnector.configuration.wp_api_paginated_models, as the default is DEPRICATED"
         models = %w( articles news_articles pages media)
       end
       models
