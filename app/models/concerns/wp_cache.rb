@@ -41,7 +41,7 @@ module WpCache
       # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
-      where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
+      where(polylang_id: wp_json['terms']['post_translations'][0]['ID']).first_or_initialize.update_wp_cache(wp_json)
     end
 
     def create_or_update_all
