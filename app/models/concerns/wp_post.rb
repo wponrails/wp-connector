@@ -11,7 +11,9 @@ module WpPost
       send("#{wp_attribute}=", json[wp_attribute])
     end
 
-    self.polylang_id  = json['terms']['post_translations'][0]['ID']
+    language = json['terms']['language'][0]['slug']
+    self.send("wp_id_#{language}=", json['ID'])
+    self.polylang_id  = json['terms']['post_translations'][0]['ID'] if json['terms']['post_translations'].present?
     # Use gmt date to ignore timezone settings in WordPress
     self.published_at = json['date_gmt']
     self.order        = json['menu_order']

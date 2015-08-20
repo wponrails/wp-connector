@@ -1,4 +1,5 @@
 require 'faraday'
+require 'php_serialize'
 
 module WpCache
   extend ActiveSupport::Concern
@@ -41,7 +42,23 @@ module WpCache
       # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
-      where(polylang_id: wp_json['terms']['post_translations'][0]['ID']).first_or_initialize.update_wp_cache(wp_json)
+      get_model(wp_json)
+      # where(polylang_id: wp_json['terms']['post_translations'][0]['ID']).first_or_initialize.update_wp_cache(wp_json)
+    end
+
+    def get_model(wp_json)
+      if wp_json['terms']['post_translations'].present?
+        model = where(polylang_id: wp_json['terms']['post_translations'][0]['ID']).first
+        return model.update_wp_cache(wp_json) unless model.nil?
+
+        translations = PHP.unserialize(wp_json['terms']['post_translations'][0]['description'])
+        translations.each do |locale, id|
+          model = where("wp_id_#{locale} = ?", id).first
+          return model.update_wp_cache(wp_json) unless model.nil?
+        end
+      else
+        where("wp_id_#{wp_json['terms']['language'][0]['slug']} = ?", wp_json['ID']).first_or_initialize.update_wp_cache(wp_json)
+      end
     end
 
     def create_or_update_all
