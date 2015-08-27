@@ -28,7 +28,7 @@ module WpCache
     def schedule_create_or_update(wp_id, preview = false, request = nil)
       extra_info = request ? " after #{request.fullpath} -- #{request.body.read}" : ""
       Rails.logger.info("SCHEDULED by #{self.name}" + extra_info)
-      WpApiWorker.perform_async(self, wp_id, preview)
+      WpApiWorker.perform_async(self.name, wp_id, preview)
     end
 
     def update_options
@@ -50,7 +50,12 @@ module WpCache
       # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
-      get_model(wp_json)
+
+      if self.polylang?
+        get_model(wp_json)
+      else
+        where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
+      end
     end
 
     def get_model(wp_json)
@@ -77,12 +82,6 @@ module WpCache
           model = self.where('id = ?', translation.send("#{self.name.downcase}_id")).first
           model.update_wp_cache(wp_json)
         end
-
-        # joins(:translations)
-        #   .where("#{self.name.downcase}_translations.wp_id = ?", wp_json['ID'].to_s)
-        #   .references(:translations)
-        #   .first_or_initialize.update_wp_cache(wp_json)
-        # where("wp_id_#{wp_json['terms']['language'][0]['slug']} = ?", wp_json['ID']).first_or_initialize.update_wp_cache(wp_json)
       end
     end
 

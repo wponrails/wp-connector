@@ -33,5 +33,9 @@ module WpPost
     def wp_type
       self.to_s.demodulize.underscore.pluralize
     end
+
+    def polylang?
+      false
+    end
   end
 end
