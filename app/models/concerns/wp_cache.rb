@@ -79,7 +79,7 @@ module WpCache
           model = self.new
           model.update_wp_cache(wp_json)
         else
-          model = self.where('id = ?', translation.send("#{self.name.downcase}_id")).first
+          model = self.where('id = ?', translation.send("#{self.table_name.singularize}_id")).first
           model.update_wp_cache(wp_json)
         end
       end
