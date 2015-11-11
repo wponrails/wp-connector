@@ -109,6 +109,13 @@ module WpCache
       logger.warn "Could not purge #{self} with id #{wp_id}, no record with that id was found."
     end
 
+    def unpublish(wp_id)
+      where(wp_id: wp_id).first!.update_attribute(:status, "draft")
+    rescue
+      logger.warn "Could not unpublish #{self} with id #{wp_id}, no record with that id was found."
+    end
+
+
     private
 
     #
