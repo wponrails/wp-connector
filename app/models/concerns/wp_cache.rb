@@ -45,8 +45,7 @@ module WpCache
       # WP API will return a code if the route is incorrect or
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
-      where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
-      where(wp_id: wp_id).first!.update_attribute(:status, "publish")
+      unscoped.where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
     end
 
     def update_options
@@ -82,13 +81,12 @@ module WpCache
         break if wp_json.empty?
         ids << wp_json.map do |json|
           wp_id = json['ID']
-          where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
-          where(wp_id: wp_id).first!.update_attribute(:status, "publish")
+          unscoped.where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
           wp_id
         end
         page = page + 1
       end
-      where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
+      unscoped.where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
     end
 
     # TODO (dunyakirkali) doc
@@ -96,18 +94,17 @@ module WpCache
       wp_json = get_from_wp_api(wp_type)
       ids = wp_json.map do |json|
         wp_id = json['ID']
-        where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
-        where(wp_id: wp_id).first!.update_attribute(:status, "publish")
+        unscoped.where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
         wp_id
       end
-      where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+      unscoped.where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
     end
 
     #
     # Purge a cached piece of content, while logging any exceptions.
     #
     def purge(wp_id)
-      where(wp_id: wp_id).first!.destroy
+      unscoped.where(wp_id: wp_id).first!.destroy
     rescue
       logger.warn "Could not purge #{self} with id #{wp_id}, no record with that id was found."
     end
