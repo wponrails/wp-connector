@@ -46,6 +46,7 @@ module WpCache
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
       where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
+      where(wp_id: wp_id).first!.update_attribute(:status, "publish")
     end
 
     def update_options
@@ -82,6 +83,7 @@ module WpCache
         ids << wp_json.map do |json|
           wp_id = json['ID']
           where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
+          where(wp_id: wp_id).first!.update_attribute(:status, "publish")
           wp_id
         end
         page = page + 1
@@ -95,6 +97,7 @@ module WpCache
       ids = wp_json.map do |json|
         wp_id = json['ID']
         where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
+        where(wp_id: wp_id).first!.update_attribute(:status, "publish")
         wp_id
       end
       where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
