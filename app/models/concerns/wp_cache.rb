@@ -30,6 +30,10 @@ module WpCache
       WpApiWorker.perform_async(self, wp_id, preview)
     end
 
+    def schedule_update_options
+      WpApiWorker.perform_async(self)
+    end
+
     #
     # Gets the content from the WP API, finds-or-creates a record for it,
     # and passes it the content by the `update_wp_cache` instance method.
@@ -42,6 +46,14 @@ module WpCache
       # the specified entry is none existant. If so return early.
       return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
       where(wp_id: wp_id).first_or_initialize.update_wp_cache(wp_json)
+    end
+
+    def update_options
+      wp_json = get_from_wp_api "options"
+      # WP API will return a code if the route is incorrect or
+      # the specified entry is none existant. If so return early.
+      return if wp_json[0] and invalid_api_responses.include? wp_json[0]["code"]
+      self.update_wp_cache(wp_json)
     end
 
     def create_or_update_all
