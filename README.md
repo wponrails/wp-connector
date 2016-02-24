@@ -6,11 +6,11 @@ wp-connector
 [![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 [![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 
-This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that limits WP to a means of managing content while using a Rails application to serve public request and provide a basis for customizations.
+This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that limits WordPress (WP) to a means of managing content while using a Rails application to serve public requests and provide a basis for customizations.
 
 To prepare a WP installation to be used in a **WP on Rails** architecture the [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) plugin is provided. It provides a means to configure WP actions to send notifications as webhook calls to a Rails application equipped with **wp-connector**.
 
-When using **WP on Rails** the content's *master data* resides in WP's database, as that's where is it created and modified.  The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
+When using **WP on Rails** the content's *master data* resides in WP's database, as that's where is it created and modified. The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
 
 The main reasons for not using WP to serve public web requests:
 
