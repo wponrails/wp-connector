@@ -8,9 +8,13 @@ require 'sidekiq'
 class WpApiWorker
   include Sidekiq::Worker
 
-  def perform(klass, wp_id, preview = false)
+  def perform(klass, wp_id = nil, preview = false)
     cklass = klass.constantize
-    cklass.create_or_update(cklass.wp_type, wp_id, preview)
+    if wp_id
+      cklass.create_or_update(cklass.wp_type, wp_id, preview)
+    else
+      cklass.update_options()
+    end
   rescue Exceptions::WpApiResponseError => e
     Rails.logger.warn ("[FAILED JOB] " + e.message)
   end
