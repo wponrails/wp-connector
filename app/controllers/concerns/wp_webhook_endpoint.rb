@@ -40,7 +40,7 @@ module WpWebhookEndpoint
   end
 
   def require_valid_api_key
-    head :unauthorized unless params[:api_key] == Rails.configuration.x.wp_connector_api_key
+    head :unauthorized unless params[:api_key] == WpConnector.configuration.wp_connector_api_key
   end
 
   #
