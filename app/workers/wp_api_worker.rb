@@ -1,5 +1,4 @@
 require 'sidekiq'
-
 #
 # This worker is used to schedule a `create_or_update` class method call
 # on the provided model for ASAP.
