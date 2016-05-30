@@ -26,7 +26,11 @@ module WpCache
     def schedule_create_or_update(wp_id, preview = false, request = nil, delay = 0.5)
       extra_info = request ? " after #{request.fullpath} -- #{request.body.read}" : ""
       Rails.logger.info("SCHEDULED by #{self.class}" + extra_info)
-      WpApiWorker.perform_in(delay.seconds, self, wp_id, preview)
+      if delay > 0
+        WpApiWorker.perform_in(delay.seconds, self, wp_id, preview)
+      else
+        WpApiWorker.perform_async(self, wp_id, preview)
+      end
     end
 
     def schedule_update_options
