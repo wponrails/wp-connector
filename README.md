@@ -6,16 +6,16 @@ wp-connector
 [![Code Climate](https://codeclimate.com/github/hoppinger/wp-connector/badges/gpa.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 [![Test Coverage](https://codeclimate.com/github/hoppinger/wp-connector/badges/coverage.svg)](https://codeclimate.com/github/hoppinger/wp-connector)
 
-This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that limits WordPress (WP) to a means of managing content while using a Rails application to serve public requests and provide a basis for customizations.
+This library is part of the [**WP on Rails**](https://github.com/wponrails) project, that uses WordPress (WP) in a "headless" fashion —as a means of managing content— while using a Rails application to serve public requests and provide a basis for customizations.
 
-To prepare a WP installation to be used in a **WP on Rails** architecture the [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) plugin is provided. It provides a means to configure WP actions to send notifications as webhook calls to a Rails application equipped with **wp-connector**.
+To prepare a WP installation to be used in a **WP on Rails** architecture the [**wp-relinquish**](https://github.com/wponrails/wp-relinquish) plugin is provided. It provides a way to configure WP actions to send notifications as webhook calls to the Rails application equipped with **wp-connector**.
 
-When using **WP on Rails** the content's *master data* resides in WP's database, as that's where is it created and modified. The Rails application that is connected to WP stores merely a copy of the data, a cache, on the basis of which the public requests are served.
+When using **WP on Rails** the content's *master data* resides in WP's database, as that's where is it created and modified. The Rails application that is connected to WP stores a structured copy of the data (usually providing a separate table for each datatype), acting as a cache, on the basis of which the public requests are served.
 
 The main reasons for not using WP to serve public web requests are:
 
 * **Security** — The internet is a dangerous place and WordPress has proven to be a popular target for malicious hackers. By not serving public requests from WP, but only the admin interface, the attack surface is significantly reduced.
-* **Performance** — Performance tuning WP can be difficult, especially when a generic caching-proxy (such as Varnish) is not viable due to dynamic content such as ads or personalization.  Application frameworks provide means for fine-grained caching strategies that are needed to serve high-traffic websites containing dynamic content.
+* **Performance** — Performance tuning WP can be difficult, especially when a generic caching-proxy (such as Varnish) is not viable due to dynamic content such as ads or personalization.  Application frameworks provide a means for fine-grained caching strategies that are needed to serve high-traffic websites containing dynamic content.
 * **Cost (TCO) of customizations** — Customizing WP, and maintaining those customizations, is costly (laborious) and risky (error prone) compared to building custom functionality on top of an application framework (which is specifically designed for that purpose).
 * **Upgrade path** — Keeping a customized WP installation up-to-date can be a pain, and WP-updates come ever more often. When WP is not used to serve public requests and customizations are not built into WP most of this pain avoided.
 * **Modern browser interfaces** — The new breed of JavaScript UI frameworks (such as Facebook's [React](http://facebook.github.io/react) and Google's [AngularJS](https://angularjs.org)) have features like "isomorphism" (allowing JS views to be pre-rendered on the server) and "two-way data-binding." These features expect certain server-side behavior and usually consume JSON data instead of HTML. The Rails community provides many tools to facilitate these new UI libraries from the server-side.
