@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "json"
   spec.add_dependency "faraday"
-  spec.add_dependency 'sidekiq', '~> 2.17.7'
+  spec.add_dependency 'sidekiq', '~> 4.1.4'
 
   spec.add_runtime_dependency 'rails', '>= 4.0.0'
 
