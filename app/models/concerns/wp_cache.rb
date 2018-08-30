@@ -59,11 +59,11 @@ module WpCache
       self.update_wp_cache(wp_json)
     end
 
-    def create_or_update_all
+    def create_or_update_all(skip_on_error = false)
       if paginated_models.include?(wp_type)
-        create_or_update_all_paginated
+        create_or_update_all_paginated(skip_on_error)
       else
-        create_or_update_all_non_paginated
+        create_or_update_all_non_paginated(skip_on_error)
       end
     end
 
@@ -74,7 +74,7 @@ module WpCache
     # Removes records with unknown IDs.
     #
     # TODO (dunyakirkali) clean up
-    def create_or_update_all_paginated
+    def create_or_update_all_paginated(skip_on_error = false)
       page = 0
       ids = []
       max_page = (ENV['MAX_PAGE'].to_i == 0 ? 999 : ENV['MAX_PAGE'].to_i)
@@ -86,21 +86,41 @@ module WpCache
           wp_id = json['ID']
           unscoped.where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
           wp_id
+        rescue ActiveRecord::RecordNotFound => e
+          raise unless skip_on_error
+          Rails.logger.info "#{e.message} - Skipping record"
+          wp_id
         end
         page = page + 1
       end
-      unscoped.where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
+      begin
+        unscoped.where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
+      rescue ActiveRecord::RecordNotFound => e
+        raise unless skip_on_error
+        Rails.logger.info "#{e.message} - Skipping record"
+        where('wp_id NOT IN (?)', ids.flatten).destroy_all unless ids.empty?
+      end
     end
 
     # TODO (dunyakirkali) doc
-    def create_or_update_all_non_paginated
+    def create_or_update_all_non_paginated(skip_on_error = false)
       wp_json = get_from_wp_api(wp_type)
       ids = wp_json.map do |json|
         wp_id = json['ID']
         unscoped.where(wp_id: wp_id).first_or_initialize.update_wp_cache(json)
         wp_id
+      rescue ActiveRecord::RecordNotFound => e
+        raise unless skip_on_error
+        Rails.logger.info "#{e.message} - Skipping record"
+        wp_id
       end
-      unscoped.where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+      begin
+        unscoped.where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+      rescue ActiveRecord::RecordNotFound => e
+        raise unless skip_on_error
+        Rails.logger.info "#{e.message} - Skipping record"
+        where('wp_id NOT IN (?)', ids).destroy_all unless ids.empty?
+      end
     end
 
     #
